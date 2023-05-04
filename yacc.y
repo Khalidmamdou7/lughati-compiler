@@ -77,11 +77,11 @@ case_statment: CASE data_value COLON scope
              | case_statment DEFAULT COLON scope
 
 
-while_loop : WHILE logical_expression scope 
-           | WHILE logical_expression statment
+while_loop : WHILE logical_expression scope  {printf("While Loop \n");} 
+           | WHILE logical_expression statment {printf("While Loop \n");} 
 
 
-for_loop : FOR BRACKET_OPEN variable_defintion BRACKET_CLOSE scope      {printf("For Loop \n");}  
+for_loop : FOR BRACKET_OPEN variable_defintion  BRACKET_CLOSE scope      {printf("For Loop \n");}  
          | FOR BRACKET_OPEN variable_defintion BRACKET_CLOSE statment   {printf("For Loop \n");}  
 
 do_till_loop : DO scope TILL logical_expression                         {printf("Do-till loop \n");} 
@@ -120,9 +120,9 @@ scope :  SCOPE_OPEN statments SCOPE_CLOSE   {printf("Scope \n");}
       |  SCOPE_OPEN scope SCOPE_CLOSE     
       ;
 
-assignment :   IDENTIFIER EQUAL expression 
-           |   IDENTIFIER EQUAL IDENTIFIER
-           |   assignment COMMA IDENTIFIER EQUAL expression 
+assignment :   IDENTIFIER EQUAL expression  {printf("Assignment Statment \n");}  
+           |   IDENTIFIER EQUAL IDENTIFIER   {printf("Assignment Statment \n");}  
+           |   assignment COMMA IDENTIFIER EQUAL expression   {printf("Assignment Statment \n");}  
 
 
 

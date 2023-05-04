@@ -86,7 +86,7 @@
  void yyerror (char const *s) {
             extern int yylineno;
 
-   fprintf (stderr, "encounterd a %s at line number: %d \n", s, yylineno);
+   printf ("encounterd a %s at line number: %d \n", s, yylineno);
  }
 
  int yywrap(void){

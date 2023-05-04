@@ -1597,56 +1597,86 @@ yyreduce:
 #line 1598 "y.tab.c"
     break;
 
+  case 40:
+#line 80 "yacc.y"
+                                             {printf("While Loop \n");}
+#line 1604 "y.tab.c"
+    break;
+
+  case 41:
+#line 81 "yacc.y"
+                                               {printf("While Loop \n");}
+#line 1610 "y.tab.c"
+    break;
+
   case 42:
 #line 84 "yacc.y"
                                                                         {printf("For Loop \n");}
-#line 1604 "y.tab.c"
+#line 1616 "y.tab.c"
     break;
 
   case 43:
 #line 85 "yacc.y"
                                                                         {printf("For Loop \n");}
-#line 1610 "y.tab.c"
+#line 1622 "y.tab.c"
     break;
 
   case 44:
 #line 87 "yacc.y"
                                                                         {printf("Do-till loop \n");}
-#line 1616 "y.tab.c"
+#line 1628 "y.tab.c"
     break;
 
   case 45:
 #line 91 "yacc.y"
                                                                                                               {printf("Function Declartion \n");}
-#line 1622 "y.tab.c"
+#line 1634 "y.tab.c"
     break;
 
   case 46:
 #line 93 "yacc.y"
                                                                                                               {printf("Function Defintion \n");}
-#line 1628 "y.tab.c"
+#line 1640 "y.tab.c"
     break;
 
   case 47:
 #line 95 "yacc.y"
                                                                                                               {printf("Function Call \n");}
-#line 1634 "y.tab.c"
+#line 1646 "y.tab.c"
     break;
 
   case 50:
 #line 102 "yacc.y"
                                                                    {printf("Enumuration \n");}
-#line 1640 "y.tab.c"
+#line 1652 "y.tab.c"
     break;
 
   case 60:
 #line 119 "yacc.y"
                                             {printf("Scope \n");}
-#line 1646 "y.tab.c"
+#line 1658 "y.tab.c"
+    break;
+
+  case 62:
+#line 123 "yacc.y"
+                                            {printf("Assignment Statment \n");}
+#line 1664 "y.tab.c"
+    break;
+
+  case 63:
+#line 124 "yacc.y"
+                                             {printf("Assignment Statment \n");}
+#line 1670 "y.tab.c"
+    break;
+
+  case 64:
+#line 125 "yacc.y"
+                                                              {printf("Assignment Statment \n");}
+#line 1676 "y.tab.c"
     break;
 
 
-#line 1650 "y.tab.c"
+#line 1680 "y.tab.c"
 
       default: break;
     }
