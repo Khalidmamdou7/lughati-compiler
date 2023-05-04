@@ -3,6 +3,7 @@
 #include <stdio.h> 
 #include <stdlib.h>
 #include <string.h>
+    extern FILE *yyin;
 %}
 
 %token CONST INT FLOAT DOUBLE CHAR STRING
@@ -27,7 +28,7 @@ statments : statments statment
 statment  : variable_decleration SEMICOLON
           | variable_defintion SEMICOLON
           | constant_decleration_and_defention SEMICOLON
-          | assignment SEMICOLON
+          | assignment SEMICOLON   
           | logical_expression SEMICOLON
           | if_clause
           | while_loop
@@ -39,23 +40,23 @@ statment  : variable_decleration SEMICOLON
           | function_decleration SEMICOLON
           | function_defintion
           | function_call SEMICOLON
+          ;
 
 
-
-variable_decleration : data_type IDENTIFIER                                               {printf("this is int decleration ");}
+variable_decleration : data_type IDENTIFIER                                         {printf("Variable Declartion \n");}
                   
 
-variable_defintion   : variable_decleration EQUAL expression                        {printf("variable defintion ");}
+variable_defintion   : variable_decleration EQUAL expression                        {printf("Variable Defintion (Assignment) \n");}
 
 
-constant_decleration_and_defention : CONST variable_decleration EQUAL expression    {printf("constant defintion ");}
+constant_decleration_and_defention : CONST variable_decleration EQUAL expression    {printf("Constant Defintion \n");}
     
 
-if_clause       : if_statement elseif_statment else_statment  
-                | if_statement else_statment  {printf("ifa");}  
-                | if_statement      
+if_clause       : if_statement elseif_statment else_statment           {printf("Full If statment \n");} 
+                | if_statement else_statment                           {printf("If-Else \n");} 
+                | if_statement                                         {printf("If statment \n");} 
 
-if_statement    : IF logical_expression scope   {printf("if");}  
+if_statement    : IF logical_expression scope   {printf("if");}   
                 | IF logical_expression statment     {printf("if");}  
 
 
@@ -67,12 +68,12 @@ else_statment   : ELSE scope
                 | ELSE statment
 
 
-switch_statment : SWITCH BRACKET_OPEN IDENTIFIER BRACKET_CLOSE SCOPE_OPEN case_statment SCOPE_CLOSE
+switch_statment : SWITCH BRACKET_OPEN IDENTIFIER BRACKET_CLOSE SCOPE_OPEN case_statment SCOPE_CLOSE     {printf("Switch \n");}  
 
-case_statment: CASE data_value COLON scope                                    {printf("switch");}  
-             | CASE data_value COLON scope BREAK SEMICOLON                    {printf("brekk");}  
-             | case_statment CASE data_value COLON scope                      {printf("many switchs");}  
-             | case_statment CASE data_value COLON scope BREAK SEMICOLON      {printf("many swichts break");}  
+case_statment: CASE data_value COLON scope                                    
+             | CASE data_value COLON scope BREAK SEMICOLON                
+             | case_statment CASE data_value COLON scope                    
+             | case_statment CASE data_value COLON scope BREAK SEMICOLON        
              | case_statment DEFAULT COLON scope
 
 
@@ -80,41 +81,43 @@ while_loop : WHILE logical_expression scope
            | WHILE logical_expression statment
 
 
-for_loop : FOR BRACKET_OPEN variable_defintion BRACKET_CLOSE scope
-         | FOR BRACKET_OPEN variable_defintion BRACKET_CLOSE statment
+for_loop : FOR BRACKET_OPEN variable_defintion BRACKET_CLOSE scope      {printf("For Loop \n");}  
+         | FOR BRACKET_OPEN variable_defintion BRACKET_CLOSE statment   {printf("For Loop \n");}  
 
-do_till_loop : DO scope TILL logical_expression         
+do_till_loop : DO scope TILL logical_expression                         {printf("Do-till loop \n");} 
 
 
-function_decleration: data_type IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE 
+
+function_decleration: data_type IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE                              {printf("Function Declartion \n");} 
                   
-function_defintion : function_decleration scope                    
+function_defintion : function_decleration SCOPE_OPEN statments RETURN expression SEMICOLON SCOPE_CLOSE        {printf("Function Defintion \n");} 
 
-function_call: IDENTIFIER '('  ')'
-
-parameters: parameters COMMA data_type IDENTIFIER
+function_call: IDENTIFIER '('  ')'                                                                            {printf("Function Call \n");} 
+  
+parameters: parameters COMMA data_type IDENTIFIER  
           | data_type IDENTIFIER
+          
 
 
-enum_statment:  ENUM IDENTIFIER SCOPE_OPEN assignment SCOPE_CLOSE 
+enum_statment:  ENUM IDENTIFIER SCOPE_OPEN assignment SCOPE_CLOSE  {printf("Enumuration \n");}  
 
 
-data_type : INT
-          | FLOAT
-          | DOUBLE
-          | CHAR
-          | STRING
-          ;
+data_type : INT      
+          | FLOAT   
+          | DOUBLE  
+          | CHAR    
+          | STRING  
+          
 
 
 data_value : INTEGER_VALUE
            | DECIMAL_VALUE
            | CHAR_VALUE
            | STRING_VALUE          
-           ;
+           
 
-scope :  SCOPE_OPEN statments SCOPE_CLOSE   {printf("scope");}  
-      |  SCOPE_OPEN scope SCOPE_CLOSE       {printf("nested scope");}  
+scope :  SCOPE_OPEN statments SCOPE_CLOSE   {printf("Scope \n");}  
+      |  SCOPE_OPEN scope SCOPE_CLOSE     
       ;
 
 assignment :   IDENTIFIER EQUAL expression 
@@ -147,6 +150,21 @@ factor     : expression
 
 
 %%
-int main (void) {
+
+
+
+int main(void)
+{
+    char *filename = "test.txt";
+    FILE *fp = fopen(filename, "r");
+    yyin= fp;
+
+    if (fp == NULL)
+    {
+        printf("Error: could not open file %s", filename);
+        return 1;
+    }
     yyparse();
+    
+   fclose(fp);
 }

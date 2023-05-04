@@ -80,11 +80,13 @@
 \'.?\'                           return CHAR_VALUE;
 \".?+\"                          return STRING_VALUE;
 
-.                               {printf("sasas");}
+.                               {yyerror("Lexical Error");}
 %%
 
  void yyerror (char const *s) {
-   fprintf (stderr, "%s\n", s);
+            extern int yylineno;
+
+   fprintf (stderr, "encounterd a %s at line number: %d \n", s, yylineno);
  }
 
  int yywrap(void){
