@@ -58,46 +58,49 @@ extern int yydebug;
     FOR = 264,
     WHILE = 265,
     DO = 266,
-    SWITCH = 267,
-    CASE = 268,
-    BREAK = 269,
-    DEFAULT = 270,
-    FUNCTION = 271,
-    RETURN = 272,
-    IF = 273,
-    ELSE = 274,
-    ELSEIF = 275,
-    PRINT = 276,
-    SCOPE_OPEN = 277,
-    SCOPE_CLOSE = 278,
-    BRACKET_OPEN = 279,
-    BRACKET_CLOSE = 280,
-    SQUARE_BRACKET_OPEN = 281,
-    SQUARE_BRACKET_CLOSE = 282,
-    SEMICOLON = 283,
-    COLON = 284,
-    PLUS = 285,
-    MINUS = 286,
-    MULTIPLY = 287,
-    DIVISON = 288,
-    MODLUS = 289,
-    EQUAL = 290,
-    EQUAL_EQUAL = 291,
-    NOTEQUAL = 292,
-    GREATER_THAN = 293,
-    GREATER_THAN_OR_EQUAL = 294,
-    LESS_THAN = 295,
-    LESS_THAN_OR_EQUAL = 296,
-    AND = 297,
-    OR = 298,
-    NOT = 299,
-    TRUE = 300,
-    FALSE = 301,
-    IDENTIFIER = 302,
-    INTEGER_VALUE = 303,
-    DECIMAL_VALUE = 304,
-    CHAR_VALUE = 305,
-    STRING_VALUE = 306
+    TILL = 267,
+    SWITCH = 268,
+    CASE = 269,
+    BREAK = 270,
+    DEFAULT = 271,
+    FUNCTION = 272,
+    RETURN = 273,
+    IF = 274,
+    ELSE = 275,
+    ELSEIF = 276,
+    PRINT = 277,
+    ENUM = 278,
+    SCOPE_OPEN = 279,
+    SCOPE_CLOSE = 280,
+    BRACKET_OPEN = 281,
+    BRACKET_CLOSE = 282,
+    SQUARE_BRACKET_OPEN = 283,
+    SQUARE_BRACKET_CLOSE = 284,
+    SEMICOLON = 285,
+    COLON = 286,
+    COMMA = 287,
+    PLUS = 288,
+    MINUS = 289,
+    MULTIPLY = 290,
+    DIVISON = 291,
+    MODLUS = 292,
+    EQUAL = 293,
+    EQUAL_EQUAL = 294,
+    NOTEQUAL = 295,
+    GREATER_THAN = 296,
+    GREATER_THAN_OR_EQUAL = 297,
+    LESS_THAN = 298,
+    LESS_THAN_OR_EQUAL = 299,
+    AND = 300,
+    OR = 301,
+    NOT = 302,
+    TRUE = 303,
+    FALSE = 304,
+    IDENTIFIER = 305,
+    INTEGER_VALUE = 306,
+    DECIMAL_VALUE = 307,
+    CHAR_VALUE = 308,
+    STRING_VALUE = 309
   };
 #endif
 /* Tokens.  */
@@ -110,46 +113,49 @@ extern int yydebug;
 #define FOR 264
 #define WHILE 265
 #define DO 266
-#define SWITCH 267
-#define CASE 268
-#define BREAK 269
-#define DEFAULT 270
-#define FUNCTION 271
-#define RETURN 272
-#define IF 273
-#define ELSE 274
-#define ELSEIF 275
-#define PRINT 276
-#define SCOPE_OPEN 277
-#define SCOPE_CLOSE 278
-#define BRACKET_OPEN 279
-#define BRACKET_CLOSE 280
-#define SQUARE_BRACKET_OPEN 281
-#define SQUARE_BRACKET_CLOSE 282
-#define SEMICOLON 283
-#define COLON 284
-#define PLUS 285
-#define MINUS 286
-#define MULTIPLY 287
-#define DIVISON 288
-#define MODLUS 289
-#define EQUAL 290
-#define EQUAL_EQUAL 291
-#define NOTEQUAL 292
-#define GREATER_THAN 293
-#define GREATER_THAN_OR_EQUAL 294
-#define LESS_THAN 295
-#define LESS_THAN_OR_EQUAL 296
-#define AND 297
-#define OR 298
-#define NOT 299
-#define TRUE 300
-#define FALSE 301
-#define IDENTIFIER 302
-#define INTEGER_VALUE 303
-#define DECIMAL_VALUE 304
-#define CHAR_VALUE 305
-#define STRING_VALUE 306
+#define TILL 267
+#define SWITCH 268
+#define CASE 269
+#define BREAK 270
+#define DEFAULT 271
+#define FUNCTION 272
+#define RETURN 273
+#define IF 274
+#define ELSE 275
+#define ELSEIF 276
+#define PRINT 277
+#define ENUM 278
+#define SCOPE_OPEN 279
+#define SCOPE_CLOSE 280
+#define BRACKET_OPEN 281
+#define BRACKET_CLOSE 282
+#define SQUARE_BRACKET_OPEN 283
+#define SQUARE_BRACKET_CLOSE 284
+#define SEMICOLON 285
+#define COLON 286
+#define COMMA 287
+#define PLUS 288
+#define MINUS 289
+#define MULTIPLY 290
+#define DIVISON 291
+#define MODLUS 292
+#define EQUAL 293
+#define EQUAL_EQUAL 294
+#define NOTEQUAL 295
+#define GREATER_THAN 296
+#define GREATER_THAN_OR_EQUAL 297
+#define LESS_THAN 298
+#define LESS_THAN_OR_EQUAL 299
+#define AND 300
+#define OR 301
+#define NOT 302
+#define TRUE 303
+#define FALSE 304
+#define IDENTIFIER 305
+#define INTEGER_VALUE 306
+#define DECIMAL_VALUE 307
+#define CHAR_VALUE 308
+#define STRING_VALUE 309
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

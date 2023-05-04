@@ -18,10 +18,12 @@
 "for"        return FOR;
 "while"      return WHILE;
 "do"         return DO;
+"till"       return TILL;
 "case"       return CASE;
 "switch"     return SWITCH;
 "break"      return BREAK;
 "default"    return DEFAULT;
+"enum"       return ENUM;
 
 
 "function"   return FUNCTION;
@@ -44,6 +46,7 @@
 "]"          return SQUARE_BRACKET_CLOSE;
 ";"          return SEMICOLON;
 ":"          return COLON;
+","          return COMMA;
 
 
 "+"          return PLUS;
