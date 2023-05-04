@@ -1,77 +1,86 @@
 %option yylineno
 %{
- #include <stdio.h>
-
-    #include <stdlib.h>
+#include "y.tab.h"
 %}
 
 %%
 [ \n\t\r]+                 ;/* Ignore Whitespaces */
 "/*"([^*]|\*+[^*/])*\*+"/" ; /* Ignore Comments */
 
-"const"     printf("CONST");
-"int"       printf("INT");
-"float"     printf("FLOAT");
-"double"    printf("DOUBLE");
-"char"      printf("CHAR");
-"string"    printf("STRING");
+"const"      return CONST;
+"int"        return INT;
+"float"      return FLOAT;
+"double"     return DOUBLE;
+"char"       return CHAR;
+"string"     return STRING;
 
 
-"for"       printf("FOR");
-"while"     printf("WHILE");
-"do"        printf("DO");
-"switch"    printf("SWICTH");
-"case"      printf("CASE");
-"break"     printf("BREAK");
+"for"        return FOR;
+"while"      return WHILE;
+"do"         return DO;
+"case"       return CASE;
+"switch"     return SWITCH;
+"break"      return BREAK;
 
 
-"function"  printf("FUNCTION");
-"return"    printf("RETURN");
+"function"   return FUNCTION;
+"return"     return RETURN;
 
 
-"if"        printf("IF");
-"else"      printf("ELSE");
-"else if"   printf("ELSEIF");
+"if"         return IF;
+"else"       return ELSE;
+"else if"    return ELSEIF;
+
+"print"      return PRINT;
 
 
-"{"         printf("SCOPE_OPEN");
-"}"         printf("SCOPE_CLOSE");
-"("         printf("BRACKET_OPEN");
-")"         printf("BRACKET_CLOSE");
-"["         printf("SQUARE_BRACKET_OPEN");
-"]"         printf("SQUARE_BRACKET_CLOSE");
+
+"{"          return SCOPE_OPEN;
+"}"          return SCOPE_CLOSE;
+"("          return BRACKET_OPEN;
+")"          return BRACKET_CLOSE;
+"["          return SQUARE_BRACKET_OPEN;
+"]"          return SQUARE_BRACKET_CLOSE;
 
 
-"+"         printf("PLUS");
-"-"         printf("MINUS");
-"*"         printf("MULTIPLY");
-"/"         printf("DIVISON");
-"%"         printf("MODLUS");
-"="         printf("EQUAL");
+"+"          return PLUS;
+"-"          return MINUS;
+"*"          return MULTIPLY;
+"/"          return DIVISON;
+"%"          return MODLUS;
+"="          return EQUAL;
 
 
-"=="        printf("EQUAL_EQUAL");
-"!="        printf("NOTEQUAL");
-">"         printf("GREATER_THAN");
-">="        printf("GREATER_THAN_OR_EQUAL");
-"<"         printf("LESS_THAN");
-"<="        printf("LESS_THAN_OR_EQUAL");
-"&&"        printf("AND");
-"||"        printf("OR");
-"!"         printf("NOT");
+"=="         return EQUAL_EQUAL;
+"!="         return NOTEQUAL;
+">"          return GREATER_THAN;
+">="         return GREATER_THAN_OR_EQUAL;
+"<"          return LESS_THAN;
+"<="         return LESS_THAN_OR_EQUAL;
+"&&"         return AND;
+"||"         return OR;
+"!"          return NOT;
 
 
-"true"      printf("TRUE");
-"TRUE"      printf("TRUE");
-"false"     printf("FALSE");
-"FALSE"     printf("FALSE");
+"true"       return TRUE;
+"TRUE"       return TRUE;
+"false"      return FALSE;
+"FALSE"      return FALSE;
 
 
-[a-zA-Z_][a-zA-Z_0-9]*          printf("IDENTIFIER");
-0|[-]?[1-9][0-9]*               printf("INTEGER");
-[-]?[0-9]+['.'][0-9]*           printf("DECIMAL");          
-\'.?\'                          printf("CHAR");
-\".?+\"                         printf("STRING");
+[a-zA-Z_][a-zA-Z_0-9]*           return IDENTIFIER;
+0|[-]?[1-9][0-9]*                return INTEGER_VALUE;
+[-]?[0-9]+['.'][0-9]*            return DECIMAL_VALUE;          
+\'.?\'                           return CHAR_VALUE;
+\".?+\"                          return STRING_VALUE;
 
-.                               {printf(strdup(yytext)) + "Asakbna"}
+.                               {printf("sasas");}
 %%
+
+ void yyerror (char const *s) {
+   fprintf (stderr, "%s\n", s);
+ }
+
+ int yywrap(void){
+    return 1;
+}
