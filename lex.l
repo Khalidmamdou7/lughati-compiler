@@ -41,6 +41,7 @@
 ")"          return BRACKET_CLOSE;
 "["          return SQUARE_BRACKET_OPEN;
 "]"          return SQUARE_BRACKET_CLOSE;
+";"          return SEMICOLON;
 
 
 "+"          return PLUS;
