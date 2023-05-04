@@ -21,6 +21,7 @@
 "case"       return CASE;
 "switch"     return SWITCH;
 "break"      return BREAK;
+"default"    return DEFAULT;
 
 
 "function"   return FUNCTION;
@@ -42,6 +43,7 @@
 "["          return SQUARE_BRACKET_OPEN;
 "]"          return SQUARE_BRACKET_CLOSE;
 ";"          return SEMICOLON;
+":"          return COLON;
 
 
 "+"          return PLUS;
