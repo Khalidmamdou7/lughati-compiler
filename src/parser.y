@@ -153,18 +153,35 @@ factor     : expression
 
 
 
-int main(void)
+int main(int argc, char *argv[])
 {
-    char *filename = "test.txt";
-    FILE *fp = fopen(filename, "r");
-    yyin= fp;
+    char input[1000];
+    FILE *fp = NULL;
+    if (argc != 2) {
+        printf("Enter input(!q to quit): \n");
+        while (1) {
+            fgets(input, 1000, stdin);
+            if (strcmp(input, "!q\n") == 0) {
+                break;
+            }
+            yy_scan_string(input);
+            yyparse();
+        }
+    } else {
+        char *filename = argv[1];
+        fp = fopen(filename, "r");
+        yyin = fp;
 
-    if (fp == NULL)
-    {
-        printf("Error: could not open file %s", filename);
-        return 1;
+        if (fp == NULL)
+        {
+            printf("Error: could not open file %s", filename);
+            return 1;
+        }
+
+        yyparse();
+
+        fclose(yyin);
     }
-    yyparse();
-    
-   fclose(fp);
+    return 0;
 }
+

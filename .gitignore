@@ -1,0 +1,4 @@
+build/
+
+# Files and directories created by the FUSE filesystem (when a file is deleted, a .fuse_hidden* file is created)
+.fuse*
