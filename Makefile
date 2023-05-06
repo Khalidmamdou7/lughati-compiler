@@ -38,10 +38,14 @@ $(LEX_OUTPUT): $(LEX_FILE) $(YACC_OUTPUT)
 $(YACC_OUTPUT): $(YACC_FILE)
 	$(YACC) -d $(YACC_FILE) -o $@
 
+
 run_test: $(EXECUTABLE)
 	./$(EXECUTABLE) $(TEST_DIR)/$(TEST_NAME)/input.txt > $(TEST_DIR)/$(TEST_NAME)/output.txt
 	diff $(TEST_DIR)/$(TEST_NAME)/expected_output.txt $(TEST_DIR)/$(TEST_NAME)/output.txt || echo "Test failed" && echo "Test passed"
 
+TEST_NAMES=$(shell ls $(TEST_DIR))
+run_tests: $(EXECUTABLE)
+	$(foreach test_name, $(TEST_NAMES), $(MAKE) run_test TEST_NAME=$(test_name);)
 
 clean:
 	rm -f $(EXECUTABLE) $(OBJ_FILES) $(LEX_OUTPUT) $(YACC_OUTPUT)

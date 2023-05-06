@@ -51,7 +51,7 @@ The input file path and the output file path are optional. If not specified, the
 To run the tests, run the following command:
 
 ```bash
-make run_test
+make run_tests
 ```
 
 This will run all the tests in the `tests` directory. You could also specify to run a specific test by running the following command:
