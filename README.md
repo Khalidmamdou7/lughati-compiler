@@ -24,6 +24,10 @@ To use the Lughati Compiler, you will need to have the following installed on yo
 - [YACC](https://www.gnu.org/software/bison/) (Yet Another Compiler Compiler)
 - [Make](https://www.gnu.org/software/make/) (A GNU tool which controls the generation of executables and other non-source files of a program from the program's source files)
 
+## GUI
+
+We have also developed a Web-based GUI for the Lughati Compiler. You can find it [here](./src/gui/). Make sure to run the backend server and the frontend server using `npm i` and `npm start` respectively in each directory.
+
 
 ## Building and Running
 

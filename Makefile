@@ -20,13 +20,15 @@ EXECUTABLE=$(BUILD_DIR)/lughati-parser
 CFLAGS=-Wall -Wextra
 LDFLAGS=
 
+all: clean build run
+
 # IF OUTPUT_FILE is not set, then print to stdout else print to OUTPUT_FILE
 run: $(EXECUTABLE)
 	$(if $(OUTPUT_FILE), ./$(EXECUTABLE) $(INPUT_FILE) > $(OUTPUT_FILE), ./$(EXECUTABLE) $(INPUT_FILE))
 
 
 # Targets
-all: $(EXECUTABLE)
+build: $(EXECUTABLE)
 
 $(EXECUTABLE): $(OUTPUT_FILES)
 	$(CC) $(LDFLAGS) $^ -o $@
