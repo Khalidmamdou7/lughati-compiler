@@ -60,7 +60,7 @@ This will run all the tests in the `tests` directory. You could also specify to 
 make run_test TEST_NAME=<test_name>
 ```
 
-For example, to run the parser on the test file `test1.txt`, you can run the following command:
+For example, to run the parser on the test in the file `tests/test1/input.txt`, you can run the following command:
 
 ```bash
 make run_test TEST_NAME=test1
