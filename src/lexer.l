@@ -1,6 +1,6 @@
 %option yylineno
 %{
-#include "y.tab.h"
+#include "../build/parser.tab.h"
 %}
 
 %%
