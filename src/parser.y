@@ -36,11 +36,11 @@ statment  : variable_decleration SEMICOLON                  {printf("Variable De
           | do_till_loop
           | switch_statment
           | case_statment
-          | enum_statment SEMICOLON
-          | function_decleration SEMICOLON
+          | enum_statment SEMICOLON       {printf("Enumuration \n");}  
+          | function_decleration SEMICOLON  {printf("Function Declartion \n");} 
           | function_defintion
-          | function_call SEMICOLON
-          | print_statment SEMICOLON
+          | function_call SEMICOLON        {printf("Function Call \n");} 
+          | print_statment SEMICOLON     {printf("Print Statment \n");}  
           
 
 
@@ -100,15 +100,15 @@ do_till_loop : DO scope TILL BRACKET_OPEN comparison_expression BRACKET_CLOSE   
              | DO statment TILL BRACKET_OPEN comparison_expression BRACKET_CLOSE    {printf("Do-till loop \n");} 
 
 
-function_decleration : INT IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE                     {printf("Function Declartion \n");} 
-                     | FLOAT IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE                   {printf("Function Declartion \n");} 
-                     | DOUBLE IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE                  {printf("Function Declartion \n");} 
-                     | CHAR IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE                    {printf("Function Declartion \n");} 
-                     | STRING IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE                  {printf("Function Declartion \n");} 
+function_decleration : INT IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE                    
+                     | FLOAT IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE                
+                     | DOUBLE IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE                  
+                     | CHAR IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE                   
+                     | STRING IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE                  
 
 function_defintion : function_decleration SCOPE_OPEN statments RETURN expression SEMICOLON SCOPE_CLOSE        {printf("Function Defintion \n");} 
 
-function_call: IDENTIFIER BRACKET_OPEN arguments BRACKET_CLOSE                                                                           {printf("Function Call \n");} 
+function_call: IDENTIFIER BRACKET_OPEN arguments BRACKET_CLOSE                                                                      
   
 parameters: parameters COMMA INT IDENTIFIER  
           | data_type IDENTIFIER
@@ -120,9 +120,9 @@ arguments: arguments COMMA  IDENTIFIER
           |; 
 
 
-enum_statment:  ENUM IDENTIFIER SCOPE_OPEN assignment SCOPE_CLOSE  {printf("Enumuration \n");}  
+enum_statment:  ENUM IDENTIFIER SCOPE_OPEN assignment SCOPE_CLOSE  
 
-print_statment: PRINT BRACKET_OPEN STRING_VALUE BRACKET_CLOSE  {printf("Print Statment \n");}  
+print_statment: PRINT BRACKET_OPEN STRING_VALUE BRACKET_CLOSE  
            
 
 scope :  SCOPE_OPEN statments SCOPE_CLOSE   {printf("Scope \n");}  
