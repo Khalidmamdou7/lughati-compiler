@@ -22,8 +22,12 @@ const [output, setOutput] = useState("");
     };
     let api_host = process.env.API_HOST || "localhost:8000";
     const res = await axios.post(`http://${api_host}/parse`, requestBody);
-    console.log(res);
-    setOutput(res.data);
+    console.log(res.data.error[0]);
+    //This means it's a real error becase it begins with "e" for encounterd
+    if(res.data.error[0] == "e")
+    setOutput(res.data.data + res.data.error);
+    else 
+    setOutput(res.data.data);
   }
 
   return (

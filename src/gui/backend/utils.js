@@ -31,6 +31,7 @@ const runCompiler = async () => {
 
 const getOutput = async () => {
     const data = await fs.readFileSync('./compiler-files/output.txt', 'utf8')
+
     return data
 }
 

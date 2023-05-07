@@ -1,2 +1,1 @@
-Variable Declartion 
 Variable Defintion (Assignment) 

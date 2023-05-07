@@ -1,3 +1,0 @@
-Variable Declartion 
-Variable Defintion (Assignment) 
-Assignment Statment 

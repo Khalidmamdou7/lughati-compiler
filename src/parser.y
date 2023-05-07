@@ -8,7 +8,7 @@
 
 %token CONST INT FLOAT DOUBLE CHAR STRING
 %token FOR WHILE DO TILL SWITCH CASE BREAK DEFAULT FUNCTION RETURN IF ELSE ELSEIF PRINT ENUM
-%token SCOPE_OPEN SCOPE_CLOSE BRACKET_OPEN BRACKET_CLOSE SQUARE_BRACKET_OPEN SQUARE_BRACKET_CLOSE SEMICOLON COLON COMMA
+%token SCOPE_OPEN SCOPE_CLOSE BRACKET_OPEN BRACKET_CLOSE SQUARE_BRACKET_OPEN SQUARE_BRACKET_CLOSE SEMICOLON COLON COMMA DOUBLE_QUOTES
 %token PLUS MINUS MULTIPLY DIVISON MODLUS EQUAL 
 %token EQUAL_EQUAL NOTEQUAL GREATER_THAN GREATER_THAN_OR_EQUAL LESS_THAN LESS_THAN_OR_EQUAL AND OR NOT TRUE FALSE 
 %token IDENTIFIER INTEGER_VALUE DECIMAL_VALUE CHAR_VALUE STRING_VALUE 
@@ -16,7 +16,7 @@
 %start code
 
 %%
-code : statments                      
+code : statments         
 
 statments : statments statment     
           |
@@ -25,11 +25,11 @@ statments : statments statment
           scope
 
 
-statment  : variable_decleration SEMICOLON
-          | variable_defintion SEMICOLON
-          | constant_decleration_and_defention SEMICOLON
+statment  : variable_decleration SEMICOLON                  {printf("Variable Declartion \n");}
+          | variable_defintion SEMICOLON                    {printf("Variable Defintion (Assignment) \n");}
+          | constant_decleration_and_defention SEMICOLON    {printf("Constant Defintion \n");}
           | assignment SEMICOLON   
-          | logical_expression SEMICOLON
+          | comparison_expression SEMICOLON
           | if_clause
           | while_loop
           | for_loop
@@ -40,84 +40,94 @@ statment  : variable_decleration SEMICOLON
           | function_decleration SEMICOLON
           | function_defintion
           | function_call SEMICOLON
-          ;
+          | print_statment SEMICOLON
+          
 
 
-variable_decleration : data_type IDENTIFIER                                         {printf("Variable Declartion \n");}
+variable_decleration : INT IDENTIFIER
+                     | FLOAT IDENTIFIER
+                     | DOUBLE IDENTIFIER
+                     | CHAR IDENTIFIER
+                     | STRING IDENTIFIER
+                                                            
                   
 
-variable_defintion   : variable_decleration EQUAL expression                        {printf("Variable Defintion (Assignment) \n");}
+variable_defintion   : INT IDENTIFIER EQUAL INTEGER_VALUE 
+                     | FLOAT IDENTIFIER EQUAL DECIMAL_VALUE
+                     | CHAR IDENTIFIER EQUAL CHAR_VALUE      
+                     | STRING IDENTIFIER EQUAL STRING_VALUE
+                     | INT IDENTIFIER EQUAL IDENTIFIER 
+                     | FLOAT IDENTIFIER EQUAL IDENTIFIER
+                     | CHAR IDENTIFIER EQUAL IDENTIFIER      
+                     | STRING IDENTIFIER EQUAL IDENTIFIER             
+             
 
 
-constant_decleration_and_defention : CONST variable_decleration EQUAL expression    {printf("Constant Defintion \n");}
+constant_decleration_and_defention : CONST variable_decleration EQUAL expression    
     
 
 if_clause       : if_statement elseif_statment else_statment           {printf("Full If statment \n");} 
                 | if_statement else_statment                           {printf("If-Else \n");} 
                 | if_statement                                         {printf("If statment \n");} 
 
-if_statement    : IF logical_expression scope   {printf("if");}   
-                | IF logical_expression statment     {printf("if");}  
+if_statement    : IF BRACKET_OPEN comparison_expression BRACKET_CLOSE scope   
+                | IF BRACKET_OPEN comparison_expression BRACKET_CLOSE statment     
 
-
-elseif_statment : elseif_statment ELSEIF logical_expression scope
-                | ELSEIF logical_expression scope
-                | ELSEIF logical_expression statment
+elseif_statment : ELSEIF BRACKET_OPEN comparison_expression BRACKET_CLOSE scope
+                | ELSEIF BRACKET_OPEN comparison_expression BRACKET_CLOSE statment
 
 else_statment   : ELSE scope
                 | ELSE statment
 
 
-switch_statment : SWITCH BRACKET_OPEN IDENTIFIER BRACKET_CLOSE SCOPE_OPEN case_statment SCOPE_CLOSE     {printf("Switch \n");}  
+switch_statment : SWITCH BRACKET_OPEN IDENTIFIER BRACKET_CLOSE SCOPE_OPEN case_statment SCOPE_CLOSE     {printf("Switch Statment\n");}  
 
-case_statment: CASE data_value COLON scope                                    
-             | CASE data_value COLON scope BREAK SEMICOLON                
-             | case_statment CASE data_value COLON scope                    
-             | case_statment CASE data_value COLON scope BREAK SEMICOLON        
-             | case_statment DEFAULT COLON scope
-
-
-while_loop : WHILE logical_expression scope  {printf("While Loop \n");} 
-           | WHILE logical_expression statment {printf("While Loop \n");} 
+case_statment: CASE data_value COLON statment                                    
+             | CASE data_value COLON statment BREAK SEMICOLON                
+             | case_statment CASE data_value COLON statment                    
+             | case_statment CASE data_value COLON statment BREAK SEMICOLON        
+             | case_statment DEFAULT COLON statment
 
 
-for_loop : FOR BRACKET_OPEN variable_defintion  BRACKET_CLOSE scope      {printf("For Loop \n");}  
-         | FOR BRACKET_OPEN variable_defintion BRACKET_CLOSE statment   {printf("For Loop \n");}  
-
-do_till_loop : DO scope TILL logical_expression                         {printf("Do-till loop \n");} 
+while_loop : WHILE BRACKET_OPEN comparison_expression BRACKET_CLOSE scope    {printf("While Loop \n");} 
+           | WHILE BRACKET_OPEN comparison_expression BRACKET_CLOSE statment {printf("While Loop \n");} 
 
 
+for_loop : FOR BRACKET_OPEN variable_defintion SEMICOLON comparison_expression SEMICOLON assignment BRACKET_CLOSE scope      {printf("For Loop \n");}  
+         | FOR BRACKET_OPEN variable_defintion SEMICOLON comparison_expression SEMICOLON assignment BRACKET_CLOSE  statment   {printf("For Loop \n");}  
 
-function_decleration: data_type IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE                              {printf("Function Declartion \n");} 
-                  
+do_till_loop : DO scope TILL BRACKET_OPEN comparison_expression BRACKET_CLOSE       {printf("Do-till loop \n");} 
+             | DO statment TILL BRACKET_OPEN comparison_expression BRACKET_CLOSE    {printf("Do-till loop \n");} 
+
+
+function_decleration : INT IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE                     {printf("Function Declartion \n");} 
+                     | FLOAT IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE                   {printf("Function Declartion \n");} 
+                     | DOUBLE IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE                  {printf("Function Declartion \n");} 
+                     | CHAR IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE                    {printf("Function Declartion \n");} 
+                     | STRING IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE                  {printf("Function Declartion \n");} 
+
 function_defintion : function_decleration SCOPE_OPEN statments RETURN expression SEMICOLON SCOPE_CLOSE        {printf("Function Defintion \n");} 
 
-function_call: IDENTIFIER '('  ')'                                                                            {printf("Function Call \n");} 
+function_call: IDENTIFIER BRACKET_OPEN arguments BRACKET_CLOSE                                                                           {printf("Function Call \n");} 
   
-parameters: parameters COMMA data_type IDENTIFIER  
+parameters: parameters COMMA INT IDENTIFIER  
           | data_type IDENTIFIER
-          
+          |;
+
+
+arguments: arguments COMMA  IDENTIFIER  
+          | IDENTIFIER      
+          |; 
 
 
 enum_statment:  ENUM IDENTIFIER SCOPE_OPEN assignment SCOPE_CLOSE  {printf("Enumuration \n");}  
 
-
-data_type : INT      
-          | FLOAT   
-          | DOUBLE  
-          | CHAR    
-          | STRING  
-          
-
-
-data_value : INTEGER_VALUE
-           | DECIMAL_VALUE
-           | CHAR_VALUE
-           | STRING_VALUE          
+print_statment: PRINT BRACKET_OPEN STRING_VALUE BRACKET_CLOSE  {printf("Print Statment \n");}  
            
 
 scope :  SCOPE_OPEN statments SCOPE_CLOSE   {printf("Scope \n");}  
       |  SCOPE_OPEN scope SCOPE_CLOSE     
+      |  SCOPE_OPEN SCOPE_CLOSE
       ;
 
 assignment :   IDENTIFIER EQUAL expression  {printf("Assignment Statment \n");}  
@@ -126,12 +136,9 @@ assignment :   IDENTIFIER EQUAL expression  {printf("Assignment Statment \n");}
 
 
 
-logical_expression : BRACKET_OPEN expression OR expression   EQUAL_EQUAL    expression BRACKET_CLOSE  
-                   | BRACKET_OPEN expression AND expression  EQUAL_EQUAL    expression BRACKET_CLOSE
-                   | BRACKET_OPEN expression OR expression   NOTEQUAL       expression BRACKET_CLOSE
-                   | BRACKET_OPEN expression AND expression  NOTEQUAL       expression BRACKET_CLOSE
-                   | BRACKET_OPEN expression                 EQUAL_EQUAL    expression BRACKET_CLOSE
-                   | BRACKET_OPEN expression                 NOTEQUAL       expression BRACKET_CLOSE
+comparison_expression : IDENTIFIER comparsion_operator expression                      {printf("Comparison Statment \n");}  
+                      | comparison_expression locigal_operator comparison_expression   {printf("Ext Comparison Statment \n");}  
+
 
 
 expression : expression PLUS term                             
@@ -148,7 +155,29 @@ factor     : expression
            | IDENTIFIER   
 
 
+data_type : INT        
+          | FLOAT   
+          | DOUBLE  
+          | CHAR    
+          | STRING  
+          
 
+
+data_value : INTEGER_VALUE
+           | DECIMAL_VALUE
+           | CHAR_VALUE
+           | STRING_VALUE     
+
+locigal_operator : OR
+                 | AND  
+                 | NOT   
+
+comparsion_operator : EQUAL_EQUAL
+                    | NOTEQUAL
+                    | GREATER_THAN
+                    | GREATER_THAN_OR_EQUAL                 
+                    | LESS_THAN
+                    | LESS_THAN_OR_EQUAL
 %%
 
 

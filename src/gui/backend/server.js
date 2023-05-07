@@ -16,10 +16,10 @@ app.post('/parse', async (req, res, next) => {
 
     try {
         await createInputFile(inputString)
-        await runCompiler()
+        const error = await runCompiler()
         const data = await getOutput()
-        console.log("output: ", data)
-        res.json({ data })
+        console.log("output: ", data + "Error: "+ error)
+        res.json({ data,error})
     } catch (err) {
         console.log(err)
         res.status(500).send("Internal server error")
