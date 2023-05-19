@@ -8,6 +8,7 @@ import axios from "axios";
 const Wrapper = () => {
   const [textFieldValue, setTextFieldValue] = useState("");
   const [output, setOutput] = useState("");
+  const [tohighlight, setToHighlight] = useState(-1);
 
   const InputChangeHandler = (e) => {
     setTextFieldValue(e);
@@ -16,6 +17,7 @@ const Wrapper = () => {
   const onClearHandler = () => {
     setTextFieldValue("");
     setOutput("");
+    setToHighlight(-1);
   };
 
   const onCompileHandler = async (e) => {
@@ -27,14 +29,31 @@ const Wrapper = () => {
     const res = await axios.post(`http://${api_host}/parse`, requestBody);
     console.log(res.data.error[0]);
     //This means it's a real error becase it begins with "e" for encounterd
-    if (res.data.error[0] == "e") setOutput(res.data.data + res.data.error);
-    else setOutput(res.data.data);
+    if (res.data.error[0] == "e") {
+      setOutput(res.data.data + res.data.error);
+      // if the element before the last element is a number between 0 to 9, then it's a line number
+      if (
+        res.data.error[res.data.error.length - 4] >= "0" &&
+        res.data.error[res.data.error.length - 4] <= "9"
+      ) {
+        setToHighlight(res.data.error[res.data.error.length - 4] + res.data.error[res.data.error.length - 3]);
+      } else {
+        setToHighlight(res.data.error[res.data.error.length - 3]);
+      }
+    } else {
+      setOutput(res.data.data);
+      setToHighlight(-1);
+    }
   };
 
   return (
     <div className="wrapper">
-      <OptionsBar onCompile={onCompileHandler} onClear={onClearHandler}/>
-      <InputField onChange={InputChangeHandler} textFieldValue={textFieldValue} />
+      <OptionsBar onCompile={onCompileHandler} onClear={onClearHandler} />
+      <InputField
+        onChange={InputChangeHandler}
+        textFieldValue={textFieldValue}
+        highlight={tohighlight}
+      />
       <ErrorPanel parseOutput={output} />
     </div>
   );

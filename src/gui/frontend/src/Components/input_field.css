@@ -1,5 +1,8 @@
+.textarea-cont{
+  width: 97.35%;
+  height: 400px;
+}
 textarea {
-  background-size: 45px;
   background-attachment: scroll;
   background-repeat: repeat-y;
   border-color: #ccc;
@@ -35,4 +38,33 @@ textarea:focus {
   overflow-y: hidden;
   white-space: pre-wrap;
   padding-top: 5px;
+}
+
+.highlighted-area{
+  position: absolute;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  padding-top: 1px;
+  border: 0.8px solid transparent;
+  overflow-y: hidden;
+  white-space: pre-wrap;
+}
+.highlighted-line {
+  background-color: #ffbdbd;
+  width: 100%;
+  opacity: 0.5;
+  font-family: monospace;
+  font-size: 20px;
+  padding: 0px 2px 0px 2px;
+}
+
+.nothighlighted-lines {
+  background-color: transparent;
+  width: 0px;
+  font-family: monospace;
+  font-size: 20px;
+  padding: 2px 2px 0px 2px;
+  display: flex;
+  flex-direction: column;
 }

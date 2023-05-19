@@ -2,20 +2,29 @@ import "./input_field.css";
 import { useState, useRef, useEffect } from "react";
 
 const InputField = (props) => {
-  const [textFieldValue, setTextFieldValue] = useState(props.textFieldValue || "");
+  const [textFieldValue, setTextFieldValue] = useState(
+    props.textFieldValue || ""
+  );
+  const [toBeHighlighted, setToBeHighlighted] = useState(props.highlight || -1); // the line number to highlight in the textarea, -1 means no highlight
   const textareaRef = useRef(null);
   const lineNumbersRef = useRef(null);
+  const highlightedLineRef = useRef(null);
 
   useEffect(() => {
     setTextFieldValue(props.textFieldValue || "");
   }, [props.textFieldValue]);
 
-  const InputChangeHandler = (e) => {
+  useEffect(() => {
+    setToBeHighlighted(props.highlight || -1);
+  }, [props.highlight]);
+
+  const inputChangeHandler = (e) => {
     props.onChange(e.target.value);
   };
 
   const handleTextareaScroll = () => {
     lineNumbersRef.current.scrollTop = textareaRef.current.scrollTop;
+    highlightedLineRef.current.scrollTop = textareaRef.current.scrollTop;
   };
 
   const renderLineNumbers = () => {
@@ -26,21 +35,56 @@ const InputField = (props) => {
     ));
   };
 
+  const highlightedLine =
+    toBeHighlighted !== -1
+      ? textFieldValue.split("\n")[toBeHighlighted - 1]
+      : null;
+
+  const nottoBeHighlighted =
+    toBeHighlighted !== -1
+      ? textFieldValue
+          .split("\n")
+          .slice(0, toBeHighlighted - 1)
+          .map((line, index) => {
+            return (
+              <div
+                key={index}
+                className="line"
+                dangerouslySetInnerHTML={{ __html: "<br>" }}
+              />
+            );
+          })
+      : [];
+
   return (
     <div className="input-field">
       <div className="line-numbers-column" ref={lineNumbersRef}>
         {renderLineNumbers()}
       </div>
-      <textarea
-        rows="30"
-        cols="40"
-        className="textarea"
-        value={textFieldValue}
-        onChange={InputChangeHandler}
-        onInput={(e) => setTextFieldValue(e.target.value)}
-        onScroll={handleTextareaScroll}
-        ref={textareaRef}
-      ></textarea>
+      <div className="textarea-cont">
+        <div className="highlighted-area" ref={highlightedLineRef}>
+          <div className="nothighlighted-lines">{nottoBeHighlighted}</div>
+          <div
+            className={
+              toBeHighlighted === -1
+                ? "nothighlighted-lines"
+                : "highlighted-line"
+            }
+          >
+            {highlightedLine}
+          </div>
+        </div>
+        <textarea
+          rows="30"
+          cols="40"
+          className="textarea"
+          value={textFieldValue}
+          onChange={inputChangeHandler}
+          onInput={(e) => setTextFieldValue(e.target.value)}
+          onScroll={handleTextareaScroll}
+          ref={textareaRef}
+        ></textarea>
+      </div>
     </div>
   );
 };
