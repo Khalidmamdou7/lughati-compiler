@@ -1,6 +1,8 @@
 %option yylineno
 %{
-#include "../build/parser.tab.h"
+#include <iostream>
+#include "../build/parser.tab.hpp"
+void yyerror(char const *s);
 %}
 
 %%
@@ -82,14 +84,15 @@
 \'.?\'                           {yylval.charValue = strdup(yytext); return CHAR_VALUE;}
 \".?+\"                          {yylval.stringValue = strdup(yytext);   return STRING_VALUE;}
 .                                {yyerror("Lexical Error");}
+
 %%
 
- void yyerror (char const *s) {
-            extern int yylineno;
+void yyerror(char const *s) {
+  extern int yylineno;
 
-   fprintf (stderr,"encounterd a %s at line number: %d \n", s, yylineno);
- }
+  fprintf (stderr,"encounterd a %s at line number: %d \n", s, yylineno);
+}
 
- int yywrap(void){
-    return 1;
+int yywrap(void){
+  return 1;
 }

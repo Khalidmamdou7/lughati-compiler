@@ -1,8 +1,15 @@
 
 %{
-#include <stdio.h> 
-#include <stdlib.h>
-#include <string.h>
+#include <iostream>
+#include <cstdlib>
+#include <cstring>
+
+extern int yylex();
+extern int yyerror(const char* message);
+extern int yyparse();
+extern int yywrap();
+
+
 extern FILE *yyin;
 %}
 
@@ -31,7 +38,7 @@ extern FILE *yyin;
 
     int intValue;
     double decimalValue;
-    char charValue;
+    char* charValue;
     char* stringValue;
     int boolValue;
 };
@@ -52,9 +59,9 @@ statments : statments statment
           scope
 
 
-statment  : variable_decleration SEMICOLON                  {printf("Variable Declartion \n");}
-          | variable_defintion SEMICOLON                    {printf("Variable Defintion (Assignment) \n");}
-          | constant_decleration_and_defention SEMICOLON    {printf("Constant Defintion \n");}
+statment  : variable_decleration SEMICOLON                  {std::cout << "Variable Declartion \n";}
+          | variable_defintion SEMICOLON                    {std::cout << "Variable Defintion (Assignment) \n";}
+          | constant_decleration_and_defention SEMICOLON    {std::cout << "Constant Defintion \n";}
           | assignment SEMICOLON   
           | comparison_expression SEMICOLON
           | if_clause
@@ -63,39 +70,39 @@ statment  : variable_decleration SEMICOLON                  {printf("Variable De
           | do_till_loop
           | switch_statment
           | case_statment
-          | enum_statment SEMICOLON       {printf("Enumuration \n");}  
-          | function_decleration SEMICOLON  {printf("Function Declartion \n");} 
+          | enum_statment SEMICOLON       {std::cout << "Enumuration \n";}  
+          | function_decleration SEMICOLON  {std::cout << "Function Declartion \n";} 
           | function_defintion
-          | function_call SEMICOLON        {printf("Function Call \n");} 
-          | print_statment SEMICOLON     {printf("Print Statment \n");}  
+          | function_call SEMICOLON        {std::cout << "Function Call \n";} 
+          | print_statment SEMICOLON     {std::cout << "Print Statment \n";}  
           
 
 
 variable_decleration : INT IDENTIFIER       {
                                             //Send the identifier name and type to to the symbol table and wait for the resopone
-                                             printf("%s",$2.name);
+                                             std::cout << $2.name;
                                             }
                      | FLOAT IDENTIFIER     {
                                             //Send the identifier name and type to to the symbol table and wait for the resopone
-                                             printf("%s",$2.name);
+                                             std::cout << $2.name;
                                             }     
                      | DOUBLE IDENTIFIER
                                             {
                                             //Send the identifier name and type to to the symbol table and wait for the resopone
-                                             printf("%s",$2.name);
+                                             std::cout <<  $2.name;
                                             }
                      | CHAR IDENTIFIER      {
 
                                             //Send the identifier name and type to to the symbol table and wait for the resopone
-                                             printf("%c",$2.name);
+                                             std::cout <<   $2.name;
                                             }
                      | STRING IDENTIFIER    {
                                             //Send the identifier name and type to to the symbol table and wait for the resopone
-                                             printf("%s",$2.name);; 
+                                             std::cout <<  $2.name;; 
                                             }
                      | BOOL IDENTIFIER      {
                                             //Send the identifier name and type to to the symbol table and wait for the resopone
-                                             printf("%s",$2.name);
+                                             std::cout <<  $2.name;
                                             }
                                                             
                   
@@ -103,42 +110,42 @@ variable_decleration : INT IDENTIFIER       {
 variable_defintion   : INT IDENTIFIER EQUAL INTEGER_VALUE       {
                                                                 
                                                                    //Send the identifier name and type to to the symbol table and wait for the resopone
-                                                                    printf("%d value",$4);
+                                                                    std::cout <<  $4 << " value\n";
                                                                 }
                      | FLOAT IDENTIFIER EQUAL DECIMAL_VALUE     {
                                                                 
                                                                    //Send the identifier name, type and value to to the symbol table and wait for the resopone
-                                                                    printf("%d value",$4);
+                                                                    std::cout <<  $4 << " value\n";
                                                                 }
                      | CHAR IDENTIFIER EQUAL CHAR_VALUE         {
                                                                 
                                                                    //Send the identifier name, type and value to to the symbol table and wait for the resopone
-                                                                    printf("%d value",$4);
+                                                                    std::cout <<  $4 << " value\n";
                                                                 }     
                      | STRING IDENTIFIER EQUAL STRING_VALUE     {
                                                                 
                                                                    //Send the identifier name, type and value to to the symbol table and wait for the resopone
-                                                                    printf("%d value",$4);
+                                                                    std::cout <<  $4 << " value\n";
                                                                 }
                      | INT IDENTIFIER EQUAL IDENTIFIER          {
                                                                 
                                                                    //Send the identifier name, type and value to to the symbol table and wait for the resopone
-                                                                    printf("%d value",$4);
+                                                                    std::cout <<  $4 << " value\n";
                                                                 } 
                      | FLOAT IDENTIFIER EQUAL IDENTIFIER        {
                                                                 
                                                                    //Send the identifier name, type and value to to the symbol table and wait for the resopone
-                                                                    printf("%d value",$4);
+                                                                    std::cout <<  $4 << " value\n";
                                                                 }
                      | CHAR IDENTIFIER EQUAL IDENTIFIER         {
                                                                 
                                                                    //Send the identifier name, type and value to to the symbol table and wait for the resopone
-                                                                    printf("%d value",$4);
+                                                                    std::cout <<  $4 << " value\n";
                                                                 }      
                      | STRING IDENTIFIER EQUAL IDENTIFIER       {
                                                                 
                                                                    //Send the identifier name, type and value to to the symbol table and wait for the resopone
-                                                                    printf("%d value",$4);
+                                                                    std::cout <<  $4 << " value\n";
                                                                 }             
              
 
@@ -146,9 +153,9 @@ variable_defintion   : INT IDENTIFIER EQUAL INTEGER_VALUE       {
 constant_decleration_and_defention : CONST variable_decleration EQUAL expression    
     
 
-if_clause       : if_statement elseif_statment else_statment           {printf("Full If statment \n");} 
-                | if_statement else_statment                           {printf("If-Else \n");} 
-                | if_statement                                         {printf("If statment \n");} 
+if_clause       : if_statement elseif_statment else_statment           {std::cout << "Full If statment \n";} 
+                | if_statement else_statment                           {std::cout << "If-Else \n";} 
+                | if_statement                                         {std::cout << "If statment \n";} 
 
 if_statement    : IF BRACKET_OPEN comparison_expression BRACKET_CLOSE scope   
                 | IF BRACKET_OPEN comparison_expression BRACKET_CLOSE statment     
@@ -160,7 +167,7 @@ else_statment   : ELSE scope
                 | ELSE statment
 
 
-switch_statment : SWITCH BRACKET_OPEN IDENTIFIER BRACKET_CLOSE SCOPE_OPEN case_statment SCOPE_CLOSE     {printf("Switch Statment\n");}  
+switch_statment : SWITCH BRACKET_OPEN IDENTIFIER BRACKET_CLOSE SCOPE_OPEN case_statment SCOPE_CLOSE     {std::cout << "Switch Statment\n";}  
 
 case_statment: CASE data_value COLON statment                                    
              | CASE data_value COLON statment BREAK SEMICOLON                
@@ -169,15 +176,15 @@ case_statment: CASE data_value COLON statment
              | case_statment DEFAULT COLON statment
 
 
-while_loop : WHILE BRACKET_OPEN comparison_expression BRACKET_CLOSE scope    {printf("While Loop \n");} 
-           | WHILE BRACKET_OPEN comparison_expression BRACKET_CLOSE statment {printf("While Loop \n");} 
+while_loop : WHILE BRACKET_OPEN comparison_expression BRACKET_CLOSE scope    {std::cout << "While Loop \n";} 
+           | WHILE BRACKET_OPEN comparison_expression BRACKET_CLOSE statment {std::cout << "While Loop \n";} 
 
 
-for_loop : FOR BRACKET_OPEN variable_defintion SEMICOLON comparison_expression SEMICOLON assignment BRACKET_CLOSE scope      {printf("For Loop \n");}  
-         | FOR BRACKET_OPEN variable_defintion SEMICOLON comparison_expression SEMICOLON assignment BRACKET_CLOSE  statment   {printf("For Loop \n");}  
+for_loop : FOR BRACKET_OPEN variable_defintion SEMICOLON comparison_expression SEMICOLON assignment BRACKET_CLOSE scope      {std::cout << "For Loop \n";}  
+         | FOR BRACKET_OPEN variable_defintion SEMICOLON comparison_expression SEMICOLON assignment BRACKET_CLOSE  statment   {std::cout << "For Loop \n";}  
 
-do_till_loop : DO scope TILL BRACKET_OPEN comparison_expression BRACKET_CLOSE       {printf("Do-till loop \n");} 
-             | DO statment TILL BRACKET_OPEN comparison_expression BRACKET_CLOSE    {printf("Do-till loop \n");} 
+do_till_loop : DO scope TILL BRACKET_OPEN comparison_expression BRACKET_CLOSE       {std::cout << "Do-till loop \n";} 
+             | DO statment TILL BRACKET_OPEN comparison_expression BRACKET_CLOSE    {std::cout << "Do-till loop \n";} 
 
 
 function_decleration : INT IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE                    
@@ -186,7 +193,7 @@ function_decleration : INT IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE
                      | CHAR IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE                   
                      | STRING IDENTIFIER BRACKET_OPEN parameters BRACKET_CLOSE                  
 
-function_defintion : function_decleration SCOPE_OPEN statments RETURN expression SEMICOLON SCOPE_CLOSE        {printf("Function Defintion \n");} 
+function_defintion : function_decleration SCOPE_OPEN statments RETURN expression SEMICOLON SCOPE_CLOSE        {std::cout << "Function Defintion \n";} 
 
 function_call: IDENTIFIER BRACKET_OPEN arguments BRACKET_CLOSE                                                                      
   
@@ -205,19 +212,19 @@ enum_statment:  ENUM IDENTIFIER SCOPE_OPEN assignment SCOPE_CLOSE
 print_statment: PRINT BRACKET_OPEN STRING_VALUE BRACKET_CLOSE  
            
 
-scope :  SCOPE_OPEN statments SCOPE_CLOSE   {printf("Scope \n");}  
+scope :  SCOPE_OPEN statments SCOPE_CLOSE   {std::cout << "Scope \n";}  
       |  SCOPE_OPEN scope SCOPE_CLOSE     
       |  SCOPE_OPEN SCOPE_CLOSE
       ;
 
-assignment :   IDENTIFIER EQUAL expression  {printf("Assignment Statment \n");}  
-           |   IDENTIFIER EQUAL IDENTIFIER   {printf("Assignment Statment \n");}  
-           |   assignment COMMA IDENTIFIER EQUAL expression   {printf("Assignment Statment \n");}  
+assignment :   IDENTIFIER EQUAL expression  {std::cout << "Assignment Statment \n";}  
+           |   IDENTIFIER EQUAL IDENTIFIER   {std::cout << "Assignment Statment \n";}  
+           |   assignment COMMA IDENTIFIER EQUAL expression   {std::cout << "Assignment Statment \n";}  
 
 
 
-comparison_expression : IDENTIFIER comparsion_operator expression                      {printf("Comparison Statment \n");}  
-                      | comparison_expression locigal_operator comparison_expression   {printf("Ext Comparison Statment \n");}  
+comparison_expression : IDENTIFIER comparsion_operator expression                      {std::cout << "Comparison Statment \n";}  
+                      | comparison_expression locigal_operator comparison_expression   {std::cout << "Ext Comparison Statment \n";}  
 
 
 
@@ -267,7 +274,7 @@ int main(int argc, char *argv[])
     char input[1000];
     FILE *fp = NULL;
     if (argc != 2) {
-        printf("Enter input(!q to quit): \n");
+        std::cout << "Enter input(!q to quit): \n";
         while (1) {
             fgets(input, 1000, stdin);
             if (strcmp(input, "!q\n") == 0) {
@@ -283,7 +290,7 @@ int main(int argc, char *argv[])
 
         if (fp == NULL)
         {
-            printf("Error: could not open file %s", filename);
+            std::cout << "Error: could not open file " <<  filename;
             return 1;
         }
 
