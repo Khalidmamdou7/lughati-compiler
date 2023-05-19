@@ -1,10 +1,14 @@
 import "./input_field.css";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const InputField = (props) => {
-  const [textFieldValue, setTextFieldValue] = useState("");
+  const [textFieldValue, setTextFieldValue] = useState(props.textFieldValue || "");
   const textareaRef = useRef(null);
   const lineNumbersRef = useRef(null);
+
+  useEffect(() => {
+    setTextFieldValue(props.textFieldValue || "");
+  }, [props.textFieldValue]);
 
   const InputChangeHandler = (e) => {
     props.onChange(e.target.value);
