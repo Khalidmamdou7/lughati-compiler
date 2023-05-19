@@ -1,18 +1,38 @@
 textarea {
   background-size: 45px;
   background-attachment: scroll;
-  background-repeat:repeat-y;
+  background-repeat: repeat-y;
   border-color: #ccc;
-  width:99.55%;
+  width: 99.55%;
   height: 400px;
-  resize:none;
+  resize: none;
   overflow-y: scroll;
-  background-color:#E8F1F2 ;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+  background-color: #e8f1f2;
   font-size: 20px;
-  color:black;
-  border: 1px solid #E8F1F2;
-} 
+  color: black;
+  border: 1px solid #e8f1f2;
+}
 
 textarea:focus {
   outline: none;
-} 
+}
+
+.input-field {
+  display: flex;
+  flex-direction: row;
+}
+
+.line-numbers-column {
+  background-color: #dae4e6;
+  text-align: center;
+  width: 30px;
+  font-size: 18px;
+  line-height: 23.2px;
+  resize: none;
+  height: 400px;
+  overflow-y: hidden;
+  white-space: pre-wrap;
+  padding-top: 5px;
+}
