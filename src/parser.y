@@ -150,7 +150,7 @@ variable_defintion   : INT IDENTIFIER EQUAL INTEGER_VALUE       {
 
 
 constant_decleration_and_defention : CONST variable_decleration EQUAL expression {
-                                                                                   printf($2);
+                                                                                   printf("%s value",$2.name);
                                                                                    //send to symbol table
                                                                                  }       
     
