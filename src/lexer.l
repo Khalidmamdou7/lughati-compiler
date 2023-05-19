@@ -13,6 +13,8 @@
 "double"     return DOUBLE;
 "char"       return CHAR;
 "string"     return STRING;
+"bool"       return BOOL;
+"void"       return VOID;
 
 
 "for"        return FOR;
@@ -68,19 +70,18 @@
 "!"          return NOT;
 
 
-"true"       return TRUE;
-"TRUE"       return TRUE;
-"false"      return FALSE;
-"FALSE"      return FALSE;
+"true"       return TRUE_;
+"TRUE"       return TRUE_;
+"false"      return FALSE_;
+"FALSE"      return FALSE_;
 
 
-[a-zA-Z_][a-zA-Z_0-9]*           return IDENTIFIER;
-0|[-]?[1-9][0-9]*                return INTEGER_VALUE;
-[-]?[0-9]+['.'][0-9]*            return DECIMAL_VALUE;          
-\'.?\'                           return CHAR_VALUE;
-\".?+\"                          return STRING_VALUE;
-
-.                               {yyerror("Lexical Error");}
+[a-zA-Z_][a-zA-Z_0-9]*           {yylval.variable.name = strdup(yytext); return IDENTIFIER;}
+0|[-]?[1-9][0-9]*                {yylval.intValue = atoi(yytext); return INTEGER_VALUE;}
+[-]?[0-9]+['.'][0-9]*            {yylval.decimalValue = atoi(yytext);  return DECIMAL_VALUE;}         
+\'.?\'                           {yylval.charValue = strdup(yytext); return CHAR_VALUE;}
+\".?+\"                          {yylval.stringValue = strdup(yytext);   return STRING_VALUE;}
+.                                {yyerror("Lexical Error");}
 %%
 
  void yyerror (char const *s) {

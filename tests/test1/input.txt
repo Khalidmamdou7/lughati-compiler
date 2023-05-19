@@ -1,1 +1,0 @@
-float sa (int a);
