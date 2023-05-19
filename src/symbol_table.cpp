@@ -2,7 +2,7 @@
 
 // Function to modify an identifier
 bool SymbolTable::modify(string id, string s,
-	string t, int l)
+	string t)
 {
 	int index = hashf(id);
 	Node* start = head[index];
@@ -14,7 +14,6 @@ bool SymbolTable::modify(string id, string s,
 		if (start->identifier == id) {
 			start->scope = s;
 			start->type = t;
-			start->lineNo = l;
 			return true;
 		}
 		start = start->next;
@@ -85,11 +84,10 @@ string SymbolTable::find(string id)
 }
 
 // Function to insert an identifier
-bool SymbolTable::insert(string id, string scope,
-	string Type, int lineno)
+bool SymbolTable::insert(string id, string scope, string Type, int lineno, bool initFlag, bool funcFlag, bool constFlag)
 {
 	int index = hashf(id);
-	Node* p = new Node(id, scope, Type, lineno);
+	Node* p = new Node(id, scope, Type, lineno,initFlag,funcFlag,constFlag);
 
 	if (head[index] == NULL) {
 		head[index] = p;
