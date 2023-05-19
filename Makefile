@@ -1,7 +1,7 @@
 # Compiler variables
-CC=cc
-LEX=lex
-YACC=yacc
+CC=g++
+LEX=flex
+YACC=bison
 
 # Directories
 SRC_DIR=src
@@ -9,11 +9,11 @@ BUILD_DIR=build
 TEST_DIR=tests
 
 # File names
-LEX_FILE=$(SRC_DIR)/lexer.l
-YACC_FILE=$(SRC_DIR)/parser.y
-LEX_OUTPUT=$(BUILD_DIR)/lex.yy.c
-YACC_OUTPUT=$(BUILD_DIR)/parser.tab.c $(BUILD_DIR)/parser.tab.h
-OUTPUT_FILES=$(BUILD_DIR)/lex.yy.c $(BUILD_DIR)/parser.tab.c
+LEX_FILE=$(SRC_DIR)/lexer.lex
+YACC_FILE=$(SRC_DIR)/parser.ypp
+LEX_OUTPUT=$(BUILD_DIR)/lex.yy.cc
+YACC_OUTPUT=$(BUILD_DIR)/parser.tab.cpp $(BUILD_DIR)/parser.tab.hpp
+OUTPUT_FILES=$(BUILD_DIR)/lex.yy.cc $(BUILD_DIR)/parser.tab.cpp
 EXECUTABLE=$(BUILD_DIR)/lughati-parser
 
 # Flags
@@ -34,7 +34,7 @@ $(EXECUTABLE): $(OUTPUT_FILES)
 	$(CC) $(LDFLAGS) $^ -o $@
 
 $(LEX_OUTPUT): $(LEX_FILE) $(YACC_OUTPUT)
-	$(LEX) -o $@ $(LEX_FILE)
+	$(LEX) -+ -o $@ $(LEX_FILE)
 
 # Generate parser.tab.c and parser.tab.h
 $(YACC_OUTPUT): $(YACC_FILE)
