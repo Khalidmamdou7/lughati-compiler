@@ -14,11 +14,13 @@ extern FILE *yyin;
 
 %token<variable> IDENTIFIER 
 %token <intValue> INTEGER_VALUE
-%token <decimalValues> DECIMAL_VALUE
+%token <decimalValue> DECIMAL_VALUE
 %token <charValue> CHAR_VALUE
 %token <stringValue> STRING_VALUE
 %token <boolValue> TRUE_ FALSE_
 
+%type <variable> variable_defintion
+%type <variable> variable_decleration
 %start code
 
 %union{
@@ -103,12 +105,16 @@ variable_decleration : INT IDENTIFIER       {
 variable_defintion   : INT IDENTIFIER EQUAL INTEGER_VALUE       {
                                                                 
                                                                    //Send the identifier name and type to to the symbol table and wait for the resopone
-                                                                    printf("%d value",$4);
+                                                                    printf("%s value",$2.name);
+                                                                    if (1) //y3ny if tmam fl symbol table
+                                                                    {
+                                                                        $$ = $2;
+                                                                    }
                                                                 }
                      | FLOAT IDENTIFIER EQUAL DECIMAL_VALUE     {
                                                                 
                                                                    //Send the identifier name, type and value to to the symbol table and wait for the resopone
-                                                                    printf("%d value",$4);
+                                                                    printf("%s value",$4);
                                                                 }
                      | CHAR IDENTIFIER EQUAL CHAR_VALUE         {
                                                                 
@@ -143,7 +149,10 @@ variable_defintion   : INT IDENTIFIER EQUAL INTEGER_VALUE       {
              
 
 
-constant_decleration_and_defention : CONST variable_decleration EQUAL expression    
+constant_decleration_and_defention : CONST variable_decleration EQUAL expression {
+                                                                                   printf($2);
+                                                                                   //send to symbol table
+                                                                                 }       
     
 
 if_clause       : if_statement elseif_statment else_statment           {printf("Full If statment \n");} 
