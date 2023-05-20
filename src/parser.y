@@ -9,8 +9,11 @@
     extern int yylex(void);
     #include "../src/test.cpp"
     #include "../src/SymbolTable.h"
+    #include "../src/VariableManager.h"
+    #include <stdexcept>
 
     SymbolTable* symbolTable;
+    VariableManager* variableManager;
 %}
 
 %token CONST VOID INT FLOAT DOUBLE CHAR STRING BOOL
@@ -23,7 +26,12 @@
     struct variable{
         char* name;
         char* type;
-        int value;
+
+        int intValue;
+        double decimalValue;
+        char* charValue;
+        char* stringValue;
+        int boolValue;
 
     }variable;
 
@@ -64,12 +72,28 @@ statments : statments statment
 
 statment  : variable_decleration SEMICOLON                  {
                                                                 printf("Variable Declartion \n");
-                                                                printf("%s",yylval.variable.name);
-                                                                printf("%s",yylval.variable.type);
-                                                                printf("%d",yylineno);
-                                                                symbolTable->insert(yylval.variable.name, "dummy scope", yylval.variable.type, yylineno);
+                                                                // variableManager->printTempVariable();
+                                                                TempVariable* tempVariable = variableManager->getTempVariable();
+                                                                if (symbolTable->exists(tempVariable->getName())) {
+                                                                    yyerror("Variable already exists");
+                                                                }
+                                                                else {
+                                                                    symbolTable->insert(tempVariable->getName(), tempVariable->getType());
+                                                                }
                                                             }
-          | variable_defintion SEMICOLON                    {printf("Variable Defintion (Assignment) \n");}
+          | variable_defintion SEMICOLON                    {
+                                                                printf("Variable Defintion (Assignment) \n");
+                                                                // variableManager->printTempVariable();
+                                                                TempVariable* tempVariable = variableManager->getTempVariable();
+                                                                if (symbolTable->exists(tempVariable->getName())) {
+                                                                    yyerror("Variable already exists");
+                                                                }
+                                                                else {
+                                                                    symbolTable->insert(tempVariable->getName(), tempVariable->getType());
+                                                                    symbolTable->setVariableValue(tempVariable->getName(), tempVariable->getValue());
+                                                                }
+
+                                                            }
           | constant_decleration_and_defention SEMICOLON    {printf("Constant Defintion \n");}
           | assignment SEMICOLON   
           | comparison_expression SEMICOLON
@@ -93,6 +117,7 @@ variable_decleration : INT IDENTIFIER       {
                                                 // set variable type and name
                                                 yylval.variable.name = $2.name;
                                                 yylval.variable.type = "int";
+                                                variableManager->setTempVariable(yylval.variable.name, yylval.variable.type);
                                                 
 
                                             }
@@ -101,24 +126,37 @@ variable_decleration : INT IDENTIFIER       {
                                                 printf("%s",$2.name);
                                                 yylval.variable.name = $2.name;
                                                 yylval.variable.type = "float";
+                                                variableManager->setTempVariable(yylval.variable.name, yylval.variable.type);
                                             }     
                      | DOUBLE IDENTIFIER
                                             {
-                                            //Send the identifier name and type to to the symbol table and wait for the resopone
-                                             printf("%s",$2.name);
+                                                //Send the identifier name and type to to the symbol table and wait for the resopone
+                                                printf("%s",$2.name);
+                                                yylval.variable.name = $2.name;
+                                                yylval.variable.type = "double";
+                                                variableManager->setTempVariable(yylval.variable.name, yylval.variable.type);
                                             }
                      | CHAR IDENTIFIER      {
+                                                //Send the identifier name and type to to the symbol table and wait for the resopone
+                                                printf("%c",$2.name);
+                                                yylval.variable.name = $2.name;
+                                                yylval.variable.type = "char";
+                                                variableManager->setTempVariable(yylval.variable.name, yylval.variable.type);
 
-                                            //Send the identifier name and type to to the symbol table and wait for the resopone
-                                             printf("%c",$2.name);
                                             }
                      | STRING IDENTIFIER    {
-                                            //Send the identifier name and type to to the symbol table and wait for the resopone
-                                             printf("%s",$2.name);; 
+                                                //Send the identifier name and type to to the symbol table and wait for the resopone
+                                                printf("%s",$2.name); 
+                                                yylval.variable.name = $2.name;
+                                                yylval.variable.type = "string";
+                                                variableManager->setTempVariable(yylval.variable.name, yylval.variable.type);
                                             }
                      | BOOL IDENTIFIER      {
-                                            //Send the identifier name and type to to the symbol table and wait for the resopone
-                                             printf("%s",$2.name);
+                                                //Send the identifier name and type to to the symbol table and wait for the resopone
+                                                printf("%s",$2.name);
+                                                yylval.variable.name = $2.name;
+                                                yylval.variable.type = "bool";
+                                                variableManager->setTempVariable(yylval.variable.name, yylval.variable.type);
                                             }
                                                             
                   
@@ -127,52 +165,77 @@ variable_defintion   : INT IDENTIFIER EQUAL INTEGER_VALUE       {
                                                                 
                                                                    //Send the identifier name and type to to the symbol table and wait for the resopone
                                                                     printf("%s value",$2.name);
-                                                                    if (1) //y3ny if tmam fl symbol table
-                                                                    {
-                                                                        $$ = $2;
+                                                                    // set variable type and name
+                                                                    variableManager->setTempVariable($2.name, "int");
+                                                                    // set variable value
+                                                                    if (!variableManager->setTempVariableValue($4)) {
+                                                                        yyerror("Variable value is not compatible with the variable type");
                                                                     }
+                                                    
                                                                 }
                      | FLOAT IDENTIFIER EQUAL DECIMAL_VALUE     {
                                                                 
                                                                    //Send the identifier name, type and value to to the symbol table and wait for the resopone
                                                                     printf("%s value",$4);
+                                                                    variableManager->setTempVariable($2.name, "float");
+                                                                    if (!variableManager->setTempVariableValue($4)) {
+                                                                        yyerror("Variable value is not compatible with the variable type");
+                                                                    }
                                                                 }
                      | CHAR IDENTIFIER EQUAL CHAR_VALUE         {
                                                                 
                                                                    //Send the identifier name, type and value to to the symbol table and wait for the resopone
                                                                     printf("%d value",$4);
+                                                                    variableManager->setTempVariable($2.name, "char");
+                                                                    if (!variableManager->setTempVariableValue($4)) {
+                                                                        yyerror("Variable value is not compatible with the variable type");
+                                                                    }
                                                                 }     
                      | STRING IDENTIFIER EQUAL STRING_VALUE     {
                                                                 
                                                                    //Send the identifier name, type and value to to the symbol table and wait for the resopone
                                                                     printf("%d value",$4);
+                                                                    variableManager->setTempVariable($2.name, "string");
+                                                                    if (!variableManager->setTempVariableValue($4)) {
+                                                                        yyerror("Variable value is not compatible with the variable type");
+                                                                    }
                                                                 }
                      | INT IDENTIFIER EQUAL IDENTIFIER          {
                                                                 
                                                                    //Send the identifier name, type and value to to the symbol table and wait for the resopone
                                                                     printf("%d value",$4);
+                                                                    variableManager->setTempVariable($2.name, "int");
+                                                                    // TODO: get value of other identifier
                                                                 } 
                      | FLOAT IDENTIFIER EQUAL IDENTIFIER        {
                                                                 
                                                                    //Send the identifier name, type and value to to the symbol table and wait for the resopone
                                                                     printf("%d value",$4);
+                                                                    variableManager->setTempVariable($2.name, "float");
+                                                                    // TODO: get value of other identifier
                                                                 }
                      | CHAR IDENTIFIER EQUAL IDENTIFIER         {
                                                                 
                                                                    //Send the identifier name, type and value to to the symbol table and wait for the resopone
                                                                     printf("%d value",$4);
+                                                                    variableManager->setTempVariable($2.name, "char");
+                                                                    // TODO: get value of other identifier
                                                                 }      
                      | STRING IDENTIFIER EQUAL IDENTIFIER       {
                                                                 
                                                                    //Send the identifier name, type and value to to the symbol table and wait for the resopone
                                                                     printf("%d value",$4);
+                                                                    variableManager->setTempVariable($2.name, "string");
+                                                                    // TODO: get value of other identifier
                                                                 }             
              
 
 
 constant_decleration_and_defention : CONST variable_decleration EQUAL expression {
-                                                                                   printf("%s value",$2.name);
-                                                                                   //send to symbol table
+                                                                                    printf("%s value",$2.name);
+                                                                                    variableManager->setTempVariable($2.name, $2.type);
+                                                                                    // TODO: get value of the expression
+                                                                                    //send to symbol table
                                                                                  }       
     
 
@@ -307,6 +370,7 @@ int main(int argc, char *argv[])
 
     // Initialize the symbol table.
     symbolTable = new SymbolTable();
+    variableManager = new VariableManager();
 
     char input[1000];
     FILE *fp = NULL;
@@ -335,7 +399,7 @@ int main(int argc, char *argv[])
         }
 
         yyparse();
-        symbolTable->exportToFile();
+        // symbolTable->exportToFile();
 
 
         fclose(yyin);

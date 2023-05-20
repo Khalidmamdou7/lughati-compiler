@@ -1,183 +1,189 @@
 #include "SymbolTable.h"
 #include <iostream>
 #include <fstream>
+#include <string>
+#include <utility>
 
-// Function to modify an identifier
-bool SymbolTable::modify(string id, string s,
-	string t, int l)
-{
-	int index = hashf(id);
-	Node* start = head[index];
-
-	if (start == NULL)
-		return "-1";
-
-	while (start != NULL) {
-		if (start->identifier == id) {
-			start->scope = s;
-			start->type = t;
-			start->lineNo = l;
-			return true;
-		}
-		start = start->next;
-	}
-
-	return false; // id not found
+void SymbolTable::insert(const std::string& name, const std::string& type) {
+    symbolTable[name].push(Variable(name, type));
 }
 
-// Function to delete an identifier
-bool SymbolTable::deleteRecord(string id)
-{
-	int index = hashf(id);
-	Node* tmp = head[index];
-	Node* par = head[index];
-
-	// no identifier is present at that index
-	if (tmp == NULL) {
-		return false;
-	}
-	// only one identifier is present
-	if (tmp->identifier == id && tmp->next == NULL) {
-		tmp->next = NULL;
-		delete tmp;
-		return true;
-	}
-
-	while (tmp->identifier != id && tmp->next != NULL) {
-		par = tmp;
-		tmp = tmp->next;
-	}
-	if (tmp->identifier == id && tmp->next != NULL) {
-		par->next = tmp->next;
-		tmp->next = NULL;
-		delete tmp;
-		return true;
-	}
-
-	// delete at the end
-	else {
-		par->next = NULL;
-		tmp->next = NULL;
-		delete tmp;
-		return true;
-	}
-	return false;
+void SymbolTable::enterScope() {
+    symbolTable.emplace();
 }
 
-// Function to find an identifier
-string SymbolTable::find(string id)
-{
-	int index = hashf(id);
-	Node* start = head[index];
-
-	if (start == NULL)
-		return "-1";
-
-	while (start != NULL) {
-
-		if (start->identifier == id) {
-			start->print();
-			return start->scope;
-		}
-
-		start = start->next;
-	}
-
-	return "-1"; // not found
+void SymbolTable::exitScope() {
+    if (!symbolTable.empty()) {
+        symbolTable.erase(symbolTable.begin());
+    }
 }
 
-// Function to insert an identifier
-bool SymbolTable::insert(string id, string scope,
-	string Type, int lineno)
-{
-	int index = hashf(id);
-	Node* p = new Node(id, scope, Type, lineno);
-
-	if (head[index] == NULL) {
-		head[index] = p;
-		cout << "\n"
-			<< id << " inserted" << endl;
-
-		return true;
-	}
-
-	else {
-		Node* start = head[index];
-		while (start->next != NULL)
-			start = start->next;
-
-		start->next = p;
-		cout << "\n"
-			<< id << " inserted" << endl;
-
-		return true;
-	}
-
-	return false;
+bool SymbolTable::exists(const std::string& name) {
+    return symbolTable.count(name) > 0;
 }
 
-int SymbolTable::hashf(string id)
-{
-	int asciiSum = 0;
-
-	for (int i = 0; i < id.length(); i++) {
-		asciiSum = asciiSum + id[i];
-	}
-
-	return (asciiSum % 100);
+std::string SymbolTable::getType(const std::string& name) {
+    if (exists(name) && !symbolTable[name].empty()) {
+        return symbolTable[name].top().type;
+    }
+    return "";
 }
 
-
-void SymbolTable::print()
-{
-	Node* temp = NULL;
-	for (int i = 0; i < MAX; i++) {
-		temp = head[i];
-		if (temp == NULL)
-			continue;
-		cout << "\n"
-			<< "Identifier Name: " << temp->identifier
-			<< "\nType: " << temp->type
-			<< "\nScope: " << temp->scope
-			<< "\nLine Number: " << temp->lineNo
-			<< endl;
-		while (temp->next != NULL) {
-			temp = temp->next;
-			cout << "\n"
-				<< "Identifier Name: " << temp->identifier
-				<< "\nType: " << temp->type
-				<< "\nScope: " << temp->scope
-				<< "\nLine Number: " << temp->lineNo
-				<< endl;
-		}
-	}
+bool SymbolTable::isInitialized(const std::string& name) {
+    if (exists(name) && !symbolTable[name].empty()) {
+        return symbolTable[name].top().isInitialized;
+    }
+    return false;
 }
 
-void SymbolTable::exportToFile()
-{
-	ofstream file;
-	file.open("./build/symbolTable.txt", ios::out | ios::trunc);
-	Node* temp = NULL;
-	for (int i = 0; i < MAX; i++) {
-		temp = head[i];
-		if (temp == NULL)
-			continue;
-		file << "identifier: " << temp->identifier
-				<< "\ntype: " << temp->type
-				<< "\nscope: " << temp->scope
-				<< "\nline: " << temp->lineNo
-				<< "\n===================="
-				<< endl;
-		while (temp->next != NULL) {
-			temp = temp->next;
-			file << "\n"
-				<< "identifier: " << temp->identifier
-				<< "\ntype: " << temp->type
-				<< "\nscope: " << temp->scope
-				<< "\nline: " << temp->lineNo
-				<< "\n===================="
-				<< endl;
-		}
-	}
-	file.close();
+void SymbolTable::setInitialized(const std::string& name) {
+    if (exists(name) && !symbolTable[name].empty()) {
+        symbolTable[name].top().isInitialized = true;
+    }
+}
+
+bool SymbolTable::isUsed(const std::string& name) {
+    if (exists(name) && !symbolTable[name].empty()) {
+        return symbolTable[name].top().isUsed;
+    }
+    return false;
+}
+
+void SymbolTable::setUsed(const std::string& name) {
+    if (exists(name) && !symbolTable[name].empty()) {
+        symbolTable[name].top().isUsed = true;
+    }
+}
+
+void SymbolTable::checkUnusedVariables() {
+    for (auto& entry : symbolTable) {
+        const std::stack<Variable>& varStack = entry.second;
+        if (!varStack.empty() && !varStack.top().isUsed) {
+            std::cout << "Warning: Variable '" << varStack.top().name << "' declared but not used.\n";
+        }
+    }
+}
+
+void SymbolTable::setVariableValue(const std::string& name, const std::variant<int, float, double, bool, std::string, char>& value) {
+    if (exists(name) && !symbolTable[name].empty()) {
+        symbolTable[name].top().value = value;
+    }
+}
+
+// void SymbolTable::setValue(const std::string& name, int value) {
+//     if (exists(name) && !symbolTable[name].empty()) {
+//         symbolTable[name].top().value = value;
+//     }
+// }
+
+// void SymbolTable::setValue(const std::string& name, float value) {
+//     if (exists(name) && !symbolTable[name].empty()) {
+//         symbolTable[name].top().value = value;
+//     }
+// }
+
+// void SymbolTable::setValue(const std::string& name, double value) {
+//     if (exists(name) && !symbolTable[name].empty()) {
+//         symbolTable[name].top().value = value;
+//     }
+// }
+
+// void SymbolTable::setValue(const std::string& name, bool value) {
+//     if (exists(name) && !symbolTable[name].empty()) {
+//         symbolTable[name].top().value = value;
+//     }
+// }
+
+// void SymbolTable::setValue(const std::string& name, const std::string& value) {
+//     if (exists(name) && !symbolTable[name].empty()) {
+//         symbolTable[name].top().value = value;
+//     }
+// }
+
+// void SymbolTable::setValue(const std::string& name, char value) {
+//     if (exists(name) && !symbolTable[name].empty()) {
+//         symbolTable[name].top().value = value;
+//     }
+// }
+
+// std::variant SymbolTable::getValue(const std::string& name) {
+//     if (exists(name) && !symbolTable[name].empty()) {
+//         return symbolTable[name].top().value;
+//     }
+//     return std::variant();
+// }
+
+// int SymbolTable::getIntValue(const std::string& name) {
+//     if (exists(name) && !symbolTable[name].empty()) {
+//         return symbolTable[name].top().value;
+//     }
+//     return 0;
+// }
+
+// float SymbolTable::getFloatValue(const std::string& name) {
+//     if (exists(name) && !symbolTable[name].empty()) {
+//         return symbolTable[name].top().value;
+//     }
+//     return 0.0f;
+// }
+
+// double SymbolTable::getDoubleValue(const std::string& name) {
+//     if (exists(name) && !symbolTable[name].empty()) {
+//         return symbolTable[name].top().value;
+//     }
+//     return 0.0;
+// }
+
+// bool SymbolTable::getBoolValue(const std::string& name) {
+//     if (exists(name) && !symbolTable[name].empty()) {
+//         return symbolTable[name].top().value;
+//     }
+//     return false;
+// }
+
+// std::string SymbolTable::getStringValue(const std::string& name) {
+//     if (exists(name) && !symbolTable[name].empty()) {
+//         return symbolTable[name].top().value;
+//     }
+//     return "";
+// }
+
+// char SymbolTable::getCharValue(const std::string& name) {
+//     if (exists(name) && !symbolTable[name].empty()) {
+//         return symbolTable[name].top().value;
+//     }
+//     return '\0';
+// }
+
+void SymbolTable::print() const {
+    for (auto& entry : symbolTable) {
+        const std::stack<Variable>& varStack = entry.second;
+        if (!varStack.empty()) {
+            std::cout << "Variable: " << varStack.top().name << " Type: " << varStack.top().type << std::endl;
+            std::cout << "Initialized: " << varStack.top().isInitialized << " Used: " << varStack.top().isUsed << std::endl;
+            if (varStack.top().isInitialized) {
+                std::visit([](const auto& value) { std::cout << value << std::endl; }, varStack.top().value);
+            }
+            std::cout << std::endl;
+        }
+    }
+}
+
+void SymbolTable::exportToFile() {
+    std::ofstream file;
+	file.open("./build/symbolTable.txt", std::ios::out | std::ios::trunc);
+    for (auto& entry : symbolTable) {
+        const std::stack<Variable>& varStack = entry.second;
+        if (!varStack.empty()) {
+            file << "Variable: " << varStack.top().name << std::endl
+                    << "Type: " << varStack.top().type << std::endl;
+            file << "Initialized: " << varStack.top().isInitialized << std::endl
+                << "Used: " << varStack.top().isUsed << std::endl;
+            if (varStack.top().isInitialized) {
+                std::visit([&file](const auto& value) { file << value << std::endl; }, varStack.top().value);
+            }
+            file << "====================\n";
+        }
+    }
+    file.close();
 }

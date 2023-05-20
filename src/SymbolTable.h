@@ -1,63 +1,45 @@
-// C++ program to implement Symbol Table
+#ifndef SYMBOLTABLE_H
+#define SYMBOLTABLE_H
+
 #include <iostream>
-using namespace std;
+#include <unordered_map>
+#include <stack>
+#include <string>
+#include <utility>
+#include <variant>
+#include "Variable.h"
 
-const int MAX = 100;
-
-class Node {
-
-	string identifier, scope, type;
-	int lineNo;
-	Node* next;
-
-public:
-	Node()
-	{
-		next = NULL;
-	}
-
-	Node(string key, string value, string type, int lineNo)
-	{
-		this->identifier = key;
-		this->scope = value;
-		this->type = type;
-		this->lineNo = lineNo;
-		next = NULL;
-	}
-
-	void print()
-	{
-		cout << "Identifier's Name:" << identifier
-			<< "\nType:" << type
-			<< "\nScope: " << scope
-			<< "\nLine Number: " << lineNo << endl;
-	}
-	friend class SymbolTable;
-};
 class SymbolTable {
-	Node* head[MAX];
+private:
+    std::unordered_map<std::string, std::stack<Variable>> symbolTable;
 
 public:
-	SymbolTable()
-	{
-		for (int i = 0; i < MAX; i++)
-			head[i] = NULL;
-	}
+    void insert(const std::string& name, const std::string& type);
+    void enterScope();
+    void exitScope();
+    bool exists(const std::string& name);
+    std::string getType(const std::string& name);
+    bool isInitialized(const std::string& name);
+    void setInitialized(const std::string& name);
+    bool isUsed(const std::string& name);
+    void setUsed(const std::string& name);
+    void checkUnusedVariables();
+	void setVariableValue(const std::string& name, const std::variant<int, float, double, bool, std::string, char>& value);
+	void setValue(const std::string& name, int value);
+	void setValue(const std::string& name, float value);
+	void setValue(const std::string& name, double value);
+	void setValue(const std::string& name, bool value);
+	void setValue(const std::string& name, const std::string& value);
+	void setValue(const std::string& name, char value);
+	int getIntValue(const std::string& name);
+	float getFloatValue(const std::string& name);
+	double getDoubleValue(const std::string& name);
+	bool getBoolValue(const std::string& name);
+	std::string getStringValue(const std::string& name);
+	char getCharValue(const std::string& name);
 
-	int hashf(string id); // hash function
-	bool insert(string id, string scope,
-		string Type, int lineno);
-
-	string find(string id);
-
-	bool deleteRecord(string id);
-
-	bool modify(string id, string scope,
-		string Type, int lineno);
-    bool hasMultipleDeclarations(string id, string scope);
-    bool hasTypeMismatch(string id, string scope, string type);
-    void checkInitializationAndUsage();
-	void print();
+	void print() const;
 	void exportToFile();
-
 };
+
+#endif // SYMBOLTABLE_H
