@@ -113,7 +113,17 @@ statment  : variable_decleration SEMICOLON                  {
                                                                     symbolTable->setVariableValue(tempVariable->getName(), tempVariable->getValue());
                                                                 }
                                                             }
-          | assignment SEMICOLON   
+          | assignment SEMICOLON                            {
+                                                                printf("Assignment \n");
+                                                                variableManager->printTempVariable();
+                                                                TempVariable* tempVariable = variableManager->getTempVariable();
+                                                                if (symbolTable->exists(tempVariable->getName())) {
+                                                                    symbolTable->setVariableValue(tempVariable->getName(), tempVariable->getValue());
+                                                                }
+                                                                else {
+                                                                    yyerror("Variable does not exists");
+                                                                }
+                                                            }
           | comparison_expression SEMICOLON
           | if_clause
           | while_loop
@@ -383,7 +393,7 @@ enum_statment:  ENUM IDENTIFIER SCOPE_OPEN assignment SCOPE_CLOSE
 print_statment: PRINT BRACKET_OPEN STRING_VALUE BRACKET_CLOSE  
            
 
-scope :  SCOPE_OPEN statments SCOPE_CLOSE   {printf("Scope \n");}  
+scope :  SCOPE_OPEN statments SCOPE_CLOSE    
       |  SCOPE_OPEN scope SCOPE_CLOSE     
       |  SCOPE_OPEN SCOPE_CLOSE
       ;
@@ -395,9 +405,17 @@ assignment :   IDENTIFIER EQUAL expression  {
                                                     printf("Variable %s exists\n", $1.name);
                                                     Variable var = symbolTable->getVariable($1.name);
                                                     variableManager->setTempVariable($1.name, var.type);
-                                                    if (!variableManager->setTempVariableValue($3)) {
-                                                        yyerror("Variable value is not compatible with the variable type");
+                                                    if (var.type == "int") {
+                                                        if (!variableManager->setTempVariableValue((int)$3)) {
+                                                            yyerror("Variable value is not compatible with the variable type");
+                                                        }
+                                                    } else {
+                                                        if (!variableManager->setTempVariableValue((float)$3)) {
+                                                            yyerror("Variable value is not compatible with the variable type");
+                                                        }
                                                     }
+                                                } else {
+                                                    yyerror("Variable does not exist");
                                                 }
                                             }  
            |   IDENTIFIER EQUAL IDENTIFIER   {
