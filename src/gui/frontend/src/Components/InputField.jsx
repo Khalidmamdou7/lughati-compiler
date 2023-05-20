@@ -35,24 +35,27 @@ const InputField = (props) => {
     ));
   };
 
-  const highlightedLine =
-    toBeHighlighted !== -1
-      ? textFieldValue.split("\n")[toBeHighlighted - 1]
-      : null;
-
   const nottoBeHighlighted =
     toBeHighlighted !== -1
       ? textFieldValue
           .split("\n")
-          .slice(0, toBeHighlighted - 1)
+          .slice(0, textFieldValue.split("\n").length)
           .map((line, index) => {
-            return (
-              <div
-                key={index}
-                className="line"
-                dangerouslySetInnerHTML={{ __html: "<br>" }}
-              />
-            );
+            if (index + 1 == toBeHighlighted) {
+              return (
+                <div key={index} className="line, highlighted-line">
+                  {line}
+                </div>
+              );
+            } else {
+              return (
+                <div
+                  key={index}
+                  className="line"
+                  dangerouslySetInnerHTML={{ __html: "<br>" }}
+                />
+              );
+            }
           })
       : [];
 
@@ -64,15 +67,7 @@ const InputField = (props) => {
       <div className="textarea-cont">
         <div className="highlighted-area" ref={highlightedLineRef}>
           <div className="nothighlighted-lines">{nottoBeHighlighted}</div>
-          <div
-            className={
-              toBeHighlighted === -1
-                ? "nothighlighted-lines"
-                : "highlighted-line"
-            }
-          >
-            {highlightedLine}
-          </div>
+          
         </div>
         <textarea
           rows="30"

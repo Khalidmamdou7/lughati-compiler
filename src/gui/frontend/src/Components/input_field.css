@@ -43,26 +43,29 @@ textarea:focus {
 .highlighted-area{
   position: absolute;
   height: 400px;
+  width: max-content;
   display: flex;
   flex-direction: column;
   padding-top: 1px;
   border: 0.8px solid transparent;
   overflow-y: hidden;
   white-space: pre-wrap;
+  overflow: hidden;
+  pointer-events: none;
 }
 .highlighted-line {
   background-color: #ffbdbd;
-  width: 100%;
+  width: max-content;
   opacity: 0.5;
   font-family: monospace;
   font-size: 20px;
-  padding: 0px 2px 0px 2px;
 }
 
 .nothighlighted-lines {
   background-color: transparent;
   width: 0px;
   font-family: monospace;
+  width: max-content;
   font-size: 20px;
   padding: 2px 2px 0px 2px;
   display: flex;
