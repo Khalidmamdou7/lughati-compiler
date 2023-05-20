@@ -15,6 +15,8 @@ const SymbolTable = (props) => {
     setLineCounter(lineCounter + 1);
   };
 
+  const filteredData = tableData.filter((row) => row.line <= lineCounter);
+
   return (
     <div className="symbol_table">
       <div className="symbol_table_label">Symbol Table:</div>
@@ -30,7 +32,7 @@ const SymbolTable = (props) => {
             </tr>
           </thead>
           <tbody>
-            {tableData.map((row, index) => (
+            {filteredData.map((row, index) => (
               <tr key={index}>
                 <td>{row.identifier}</td>
                 <td>{row.type}</td>
