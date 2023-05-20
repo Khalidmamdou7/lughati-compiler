@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 import "./SymbolTable.css";
 
@@ -7,27 +8,18 @@ const SymbolTable = (props) => {
   const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
-    // Fetch table data from the backend
-    fetchTableData();
-  }, [props.fetchAgain]);
-
-  const fetchTableData = async () => {
-    console.log("Fetching table data from the backend...")
-    try {
-      // Make an API call to fetch table data from the backend
-      const response = await fetch("http://localhost:8000/symbol-table");
-      const data = await response.json();
-      
-      // Update the table data in the component state
-      setTableData(data);
-    } catch (error) {
-      console.error("Failed to fetch table data from the backend:", error);
-    }
-  };
+    setTableData(props.symbolTableData || []);
+  }, [props.symbolTableData]);
 
   const onStepNextLine = () => {
     setLineCounter(lineCounter + 1);
   };
+
+  const onReset = () => {
+    setLineCounter(0);
+  };
+
+  const filteredData = tableData.filter((row) => row.line <= lineCounter);
 
   return (
     <div className="symbol_table">
@@ -44,7 +36,7 @@ const SymbolTable = (props) => {
             </tr>
           </thead>
           <tbody>
-            {tableData.map((row, index) => (
+            {filteredData.map((row, index) => (
               <tr key={index}>
                 <td>{row.identifier}</td>
                 <td>{row.type}</td>
@@ -58,6 +50,9 @@ const SymbolTable = (props) => {
         <div className="symbol_table_btnandcounter">
           <button className="symbol_table_button" onClick={onStepNextLine}>
             Step next line
+          </button>
+          <button className="symbol_table_button" onClick={onReset}>
+            Reset counter
           </button>
           <div className="symbol_table_counter">Line: {lineCounter}</div>
         </div>
