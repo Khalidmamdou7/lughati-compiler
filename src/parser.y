@@ -316,9 +316,10 @@ variable_defintion   : INT IDENTIFIER EQUAL INTEGER_VALUE       {
 
 constant_decleration_and_defention : CONST variable_decleration EQUAL expression {
                                                                                     printf("%s value",$2.name);
-                                                                                    // variableManager->setTempVariable($2.name, $2.type);
+                                                                                    variableManager->printTempVariable();
+                                                                                    printf("%.2f\n", $4);
                                                                                     // TODO: get value of the expression
-                                                                                    // variableManager->setTempVariableValue($4);
+                                                                                    variableManager->setTempVariableValue($4);
                                                                                     //send to symbol table
                                                                                  }       
     
@@ -412,14 +413,14 @@ comparison_expression : IDENTIFIER comparsion_operator expression               
 
 expression : expression PLUS term     
            | expression MINUS term
-           | term                   
+           | term                       {printf("Term value %d \n", $1); $$ = (float)$1;}
 
 term       : term MULTIPLY factor
            | term DIVISON factor
-           | factor 
+           | factor                     {printf("Factor value %d \n", $1); $$ = (float)$1;}
 
 factor     : expression
-           | INTEGER_VALUE            
+           | INTEGER_VALUE            {printf("Integer---Value %d \n", $1); $$ = (float)$1;}
            | DECIMAL_VALUE
            | IDENTIFIER             
 
@@ -431,7 +432,7 @@ data_type : INT
           
 
 
-data_value : INTEGER_VALUE
+data_value : INTEGER_VALUE { printf("Integer Value %d \n", $1); }
            | DECIMAL_VALUE
            | CHAR_VALUE   { }      
            | STRING_VALUE       
