@@ -54,8 +54,10 @@ public:
 
 	bool modify(string id, string scope,
 		string Type, int lineno);
-     bool hasMultipleDeclarations(string id, string scope);
-     bool hasTypeMismatch(string id, string scope, string type);
+    bool hasMultipleDeclarations(string id, string scope);
+    bool hasTypeMismatch(string id, string scope, string type);
     void checkInitializationAndUsage();
+	void print();
+	void exportToFile();
 
 };

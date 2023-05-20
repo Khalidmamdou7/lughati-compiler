@@ -10,6 +10,7 @@ const Wrapper = () => {
   const [textFieldValue, setTextFieldValue] = useState("");
   const [output, setOutput] = useState("");
   const [tohighlight, setToHighlight] = useState(-1);
+  const [fetchAgain, setFetchAgain] = useState(false);
 
   const InputChangeHandler = (e) => {
     setTextFieldValue(e);
@@ -23,6 +24,7 @@ const Wrapper = () => {
 
   const onCompileHandler = async (e) => {
     // Add the text to the requestBody with the key 'inputString'
+    setFetchAgain(!fetchAgain);
     const requestBody = {
       inputString: textFieldValue,
     };
@@ -56,7 +58,9 @@ const Wrapper = () => {
         highlight={tohighlight}
       />
       <ErrorPanel parseOutput={output} />
-      <SymbolTable />
+      <SymbolTable 
+        fetchAgain={fetchAgain}
+      />
     </div>
   );
 };

@@ -9,12 +9,13 @@ const SymbolTable = (props) => {
   useEffect(() => {
     // Fetch table data from the backend
     fetchTableData();
-  }, []);
+  }, [props.fetchAgain]);
 
   const fetchTableData = async () => {
+    console.log("Fetching table data from the backend...")
     try {
       // Make an API call to fetch table data from the backend
-      const response = await fetch("/api/symbol-table");
+      const response = await fetch("http://localhost:8000/symbol-table");
       const data = await response.json();
       
       // Update the table data in the component state
@@ -38,6 +39,8 @@ const SymbolTable = (props) => {
               <th>Identifier</th>
               <th>Type</th>
               <th>Value</th>
+              <th>Scope</th>
+              <th>Line</th>
             </tr>
           </thead>
           <tbody>
@@ -46,6 +49,8 @@ const SymbolTable = (props) => {
                 <td>{row.identifier}</td>
                 <td>{row.type}</td>
                 <td>{row.value}</td>
+                <td>{row.scope}</td>
+                <td>{row.line}</td>
               </tr>
             ))}
           </tbody>

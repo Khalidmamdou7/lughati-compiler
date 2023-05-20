@@ -1,4 +1,6 @@
 #include "SymbolTable.h"
+#include <iostream>
+#include <fstream>
 
 // Function to modify an identifier
 bool SymbolTable::modify(string id, string s,
@@ -123,4 +125,59 @@ int SymbolTable::hashf(string id)
 	}
 
 	return (asciiSum % 100);
+}
+
+
+void SymbolTable::print()
+{
+	Node* temp = NULL;
+	for (int i = 0; i < MAX; i++) {
+		temp = head[i];
+		if (temp == NULL)
+			continue;
+		cout << "\n"
+			<< "Identifier Name: " << temp->identifier
+			<< "\nType: " << temp->type
+			<< "\nScope: " << temp->scope
+			<< "\nLine Number: " << temp->lineNo
+			<< endl;
+		while (temp->next != NULL) {
+			temp = temp->next;
+			cout << "\n"
+				<< "Identifier Name: " << temp->identifier
+				<< "\nType: " << temp->type
+				<< "\nScope: " << temp->scope
+				<< "\nLine Number: " << temp->lineNo
+				<< endl;
+		}
+	}
+}
+
+void SymbolTable::exportToFile()
+{
+	ofstream file;
+	file.open("./build/symbolTable.txt", ios::out | ios::trunc);
+	Node* temp = NULL;
+	for (int i = 0; i < MAX; i++) {
+		temp = head[i];
+		if (temp == NULL)
+			continue;
+		file << "identifier: " << temp->identifier
+				<< "\ntype: " << temp->type
+				<< "\nscope: " << temp->scope
+				<< "\nline: " << temp->lineNo
+				<< "\n===================="
+				<< endl;
+		while (temp->next != NULL) {
+			temp = temp->next;
+			file << "\n"
+				<< "identifier: " << temp->identifier
+				<< "\ntype: " << temp->type
+				<< "\nscope: " << temp->scope
+				<< "\nline: " << temp->lineNo
+				<< "\n===================="
+				<< endl;
+		}
+	}
+	file.close();
 }

@@ -5,7 +5,7 @@ app.use(cors());
 app.use(express.json());
 
 const exec = require('child-process-promise').exec
-const { createInputFile, runCompiler, getOutput } = require('./utils')
+const { createInputFile, runCompiler, getOutput, getSymbolTable } = require('./utils')
 
 app.post('/parse', async (req, res, next) => {
     if (!req.body.inputString) {
@@ -20,6 +20,17 @@ app.post('/parse', async (req, res, next) => {
         const data = await getOutput()
         console.log("output: ", data + "Error: "+ error)
         res.json({ data,error})
+    } catch (err) {
+        console.log(err)
+        res.status(500).send("Internal server error")
+    }
+})
+
+app.get('/symbol-table', async (req, res, next) => {
+    try {
+        const data = await getSymbolTable()
+        console.log("symbol table: ", data)
+        res.json({ data })
     } catch (err) {
         console.log(err)
         res.status(500).send("Internal server error")

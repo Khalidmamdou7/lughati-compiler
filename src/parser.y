@@ -19,17 +19,6 @@
 %token PLUS MINUS MULTIPLY DIVISON MODLUS EQUAL 
 %token EQUAL_EQUAL NOTEQUAL GREATER_THAN GREATER_THAN_OR_EQUAL LESS_THAN LESS_THAN_OR_EQUAL AND OR NOT  
 
-%token<variable> IDENTIFIER 
-%token <intValue> INTEGER_VALUE
-%token <decimalValue> DECIMAL_VALUE
-%token <charValue> CHAR_VALUE
-%token <stringValue> STRING_VALUE
-%token <boolValue> TRUE_ FALSE_
-
-%type <variable> variable_defintion
-%type <variable> variable_decleration
-%start code
-
 %union{
     struct variable{
         char* name;
@@ -44,6 +33,18 @@
     char* stringValue;
     int boolValue;
 };
+
+%token <variable> IDENTIFIER 
+%token <intValue> INTEGER_VALUE
+%token <decimalValue> DECIMAL_VALUE
+%token <charValue> CHAR_VALUE
+%token <stringValue> STRING_VALUE
+%token <boolValue> TRUE_ FALSE_
+
+%type <variable> variable_defintion
+%type <variable> variable_decleration
+%start code
+
 
 
 %%
@@ -62,8 +63,11 @@ statments : statments statment
 
 
 statment  : variable_decleration SEMICOLON                  {
-                                                                printf("Variable Declartion \n"); 
-                                                                symbolTable->insert("x", "dummy scope", "int", 0);
+                                                                printf("Variable Declartion \n");
+                                                                printf("%s",yylval.variable.name);
+                                                                printf("%s",yylval.variable.type);
+                                                                printf("%d",yylineno);
+                                                                symbolTable->insert(yylval.variable.name, "dummy scope", yylval.variable.type, yylineno);
                                                             }
           | variable_defintion SEMICOLON                    {printf("Variable Defintion (Assignment) \n");}
           | constant_decleration_and_defention SEMICOLON    {printf("Constant Defintion \n");}
@@ -84,12 +88,19 @@ statment  : variable_decleration SEMICOLON                  {
 
 
 variable_decleration : INT IDENTIFIER       {
-                                            //Send the identifier name and type to to the symbol table and wait for the resopone
-                                             printf("%s",$2.name);
+                                                //Send the identifier name and type to to the symbol table and wait for the resopone
+                                                printf("%s",$2.name);
+                                                // set variable type and name
+                                                yylval.variable.name = $2.name;
+                                                yylval.variable.type = "int";
+                                                
+
                                             }
                      | FLOAT IDENTIFIER     {
-                                            //Send the identifier name and type to to the symbol table and wait for the resopone
-                                             printf("%s",$2.name);
+                                                //Send the identifier name and type to to the symbol table and wait for the resopone
+                                                printf("%s",$2.name);
+                                                yylval.variable.name = $2.name;
+                                                yylval.variable.type = "float";
                                             }     
                      | DOUBLE IDENTIFIER
                                             {
@@ -309,6 +320,8 @@ int main(int argc, char *argv[])
             }
             yyin = fmemopen(input, strlen(input), "r");
             yyparse();
+            symbolTable->print();
+            symbolTable->exportToFile();
         }
     } else {
         char *filename = argv[1];
@@ -322,6 +335,8 @@ int main(int argc, char *argv[])
         }
 
         yyparse();
+        symbolTable->exportToFile();
+
 
         fclose(yyin);
     }

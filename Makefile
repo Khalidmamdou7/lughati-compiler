@@ -23,8 +23,10 @@ LDFLAGS=
 all: clean build run
 
 # IF OUTPUT_FILE is not set, then print to stdout else print to OUTPUT_FILE
+# IF SYMBOL_TABLE is set, then copy build/symbolTable.txt file to SYMBOL_TABLE specified path
 run: $(EXECUTABLE)
 	$(if $(OUTPUT_FILE), ./$(EXECUTABLE) $(INPUT_FILE) > $(OUTPUT_FILE), ./$(EXECUTABLE) $(INPUT_FILE))
+	$(if $(SYMBOL_TABLE), cp $(BUILD_DIR)/symbolTable.txt $(SYMBOL_TABLE),)
 
 
 # Targets
