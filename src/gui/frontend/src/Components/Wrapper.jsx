@@ -2,6 +2,7 @@ import "./wrapper.css";
 import OptionsBar from "./OptionsBar";
 import InputField from "./InputField";
 import ErrorPanel from "./ErrorPanel";
+import SymbolTable from "./SymbolTable";
 import { useState } from "react";
 import axios from "axios";
 
@@ -55,6 +56,7 @@ const Wrapper = () => {
         highlight={tohighlight}
       />
       <ErrorPanel parseOutput={output} />
+      <SymbolTable />
     </div>
   );
 };
