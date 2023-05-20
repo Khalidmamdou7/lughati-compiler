@@ -13,7 +13,7 @@ LEX_FILE=$(SRC_DIR)/lexer.l
 YACC_FILE=$(SRC_DIR)/parser.y
 LEX_OUTPUT=$(BUILD_DIR)/lex.yy.c
 YACC_OUTPUT=$(BUILD_DIR)/parser.tab.c $(BUILD_DIR)/parser.tab.h
-OUTPUT_FILES=$(BUILD_DIR)/lex.yy.c $(BUILD_DIR)/parser.tab.c
+OUTPUT_FILES=$(BUILD_DIR)/lex.yy.c $(BUILD_DIR)/parser.tab.c $(SRC_DIR)/SymbolTable.cpp
 EXECUTABLE=$(BUILD_DIR)/lughati-parser
 
 # Flags

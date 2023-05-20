@@ -1,4 +1,4 @@
-#include "symbol_table.h"
+#include "SymbolTable.h"
 
 // Function to modify an identifier
 bool SymbolTable::modify(string id, string s,
@@ -94,7 +94,7 @@ bool SymbolTable::insert(string id, string scope,
 	if (head[index] == NULL) {
 		head[index] = p;
 		cout << "\n"
-			<< id << " inserted";
+			<< id << " inserted" << endl;
 
 		return true;
 	}
@@ -106,7 +106,7 @@ bool SymbolTable::insert(string id, string scope,
 
 		start->next = p;
 		cout << "\n"
-			<< id << " inserted";
+			<< id << " inserted" << endl;
 
 		return true;
 	}

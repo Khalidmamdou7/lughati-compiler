@@ -8,6 +8,9 @@
     void yyerror(char *s);
     extern int yylex(void);
     #include "../src/test.cpp"
+    #include "../src/SymbolTable.h"
+
+    SymbolTable* symbolTable;
 %}
 
 %token CONST VOID INT FLOAT DOUBLE CHAR STRING BOOL
@@ -58,7 +61,10 @@ statments : statments statment
           scope
 
 
-statment  : variable_decleration SEMICOLON                  {printf("Variable Declartion \n"); test();}
+statment  : variable_decleration SEMICOLON                  {
+                                                                printf("Variable Declartion \n"); 
+                                                                symbolTable->insert("x", "dummy scope", "int", 0);
+                                                            }
           | variable_defintion SEMICOLON                    {printf("Variable Defintion (Assignment) \n");}
           | constant_decleration_and_defention SEMICOLON    {printf("Constant Defintion \n");}
           | assignment SEMICOLON   
@@ -287,6 +293,10 @@ int yywrap()
 
 int main(int argc, char *argv[])
 {
+
+    // Initialize the symbol table.
+    symbolTable = new SymbolTable();
+
     char input[1000];
     FILE *fp = NULL;
 
