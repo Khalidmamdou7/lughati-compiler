@@ -38,7 +38,7 @@ const SymbolTable = (props) => {
             </tr>
           </thead>
           <tbody>
-            {filteredData.map((row, index) => (
+            {tableData.map((row, index) => (
               <tr key={index}>
                 <td>{row.Variable}</td>
                 <td>{row.Type}</td>
