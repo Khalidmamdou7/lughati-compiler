@@ -1,7 +1,7 @@
 # Compiler variables
-CC=cc
-LEX=lex
-YACC=yacc
+CC=g++
+LEX=flex
+YACC=bison
 
 # Directories
 SRC_DIR=src
@@ -29,6 +29,10 @@ run: $(EXECUTABLE)
 
 # Targets
 build: $(EXECUTABLE)
+
+ifeq ($(wildcard $(BUILD_DIR)),)
+	mkdir $(BUILD_DIR)
+endif
 
 $(EXECUTABLE): $(OUTPUT_FILES)
 	$(CC) $(LDFLAGS) $^ -o $@

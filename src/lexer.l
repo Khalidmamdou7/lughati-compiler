@@ -1,6 +1,7 @@
 %option yylineno
 %{
-#include "../build/parser.tab.h"
+  #include "../build/parser.tab.h"
+  void yyerror (char const *s);
 %}
 
 %%
@@ -84,11 +85,11 @@
 .                                {yyerror("Lexical Error");}
 %%
 
- void yyerror (char const *s) {
-            extern int yylineno;
+void yyerror (char const *s) {
+  extern int yylineno;
 
-   fprintf (stderr,"encounterd a %s at line number: %d \n", s, yylineno);
- }
+  fprintf (stderr,"encounterd a %s at line number: %d \n", s, yylineno);
+}
 
  int yywrap(void){
     return 1;

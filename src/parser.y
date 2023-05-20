@@ -1,9 +1,13 @@
 
 %{
-#include <stdio.h> 
-#include <stdlib.h>
-#include <string.h>
-extern FILE *yyin;
+    #include <stdio.h> 
+    #include <stdlib.h>
+    #include <string.h>
+    extern FILE *yyin;
+    extern int yylineno;
+    void yyerror(char *s);
+    extern int yylex(void);
+    #include "../src/test.cpp"
 %}
 
 %token CONST VOID INT FLOAT DOUBLE CHAR STRING BOOL
@@ -33,7 +37,7 @@ extern FILE *yyin;
 
     int intValue;
     double decimalValue;
-    char charValue;
+    char* charValue;
     char* stringValue;
     int boolValue;
 };
@@ -54,7 +58,7 @@ statments : statments statment
           scope
 
 
-statment  : variable_decleration SEMICOLON                  {printf("Variable Declartion \n");}
+statment  : variable_decleration SEMICOLON                  {printf("Variable Declartion \n"); test();}
           | variable_defintion SEMICOLON                    {printf("Variable Defintion (Assignment) \n");}
           | constant_decleration_and_defention SEMICOLON    {printf("Constant Defintion \n");}
           | assignment SEMICOLON   
@@ -270,11 +274,22 @@ comparsion_operator : EQUAL_EQUAL
 %%
 
 
+// Defines the yyerror function.
+void yyerror(char *s)
+{
+    printf("Syntax Error on line %d: %s\n", yylineno, s);
+}
+
+int yywrap()
+{
+    return 1;
+}
 
 int main(int argc, char *argv[])
 {
     char input[1000];
     FILE *fp = NULL;
+
     if (argc != 2) {
         printf("Enter input(!q to quit): \n");
         while (1) {
@@ -282,7 +297,7 @@ int main(int argc, char *argv[])
             if (strcmp(input, "!q\n") == 0) {
                 break;
             }
-            yy_scan_string(input);
+            yyin = fmemopen(input, strlen(input), "r");
             yyparse();
         }
     } else {
