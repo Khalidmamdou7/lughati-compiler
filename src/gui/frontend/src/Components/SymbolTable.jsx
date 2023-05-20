@@ -31,6 +31,8 @@ const SymbolTable = (props) => {
               <th>Identifier</th>
               <th>Type</th>
               <th>Value</th>
+              <th>Initialized</th>
+              <th>Used</th>
               <th>Scope</th>
               <th>Line</th>
             </tr>
@@ -38,11 +40,13 @@ const SymbolTable = (props) => {
           <tbody>
             {filteredData.map((row, index) => (
               <tr key={index}>
-                <td>{row.identifier}</td>
-                <td>{row.type}</td>
-                <td>{row.value}</td>
-                <td>{row.scope}</td>
-                <td>{row.line}</td>
+                <td>{row.Variable}</td>
+                <td>{row.Type}</td>
+                <td>{row.Value || "null"}</td>
+                <td>{row.Initialized}</td>
+                <td>{row.Used}</td>
+                <td>{row.scope || "not implemented"}</td>
+                <td>{row.line || "not implemented"}</td>
               </tr>
             ))}
           </tbody>

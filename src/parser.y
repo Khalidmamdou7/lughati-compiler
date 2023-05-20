@@ -399,7 +399,7 @@ int main(int argc, char *argv[])
         }
 
         yyparse();
-        // symbolTable->exportToFile();
+        symbolTable->exportToFile();
 
 
         fclose(yyin);

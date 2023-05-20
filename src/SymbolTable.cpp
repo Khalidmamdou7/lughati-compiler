@@ -67,6 +67,7 @@ void SymbolTable::checkUnusedVariables() {
 void SymbolTable::setVariableValue(const std::string& name, const std::variant<int, float, double, bool, std::string, char>& value) {
     if (exists(name) && !symbolTable[name].empty()) {
         symbolTable[name].top().value = value;
+        symbolTable[name].top().isInitialized = true;
     }
 }
 
@@ -180,7 +181,7 @@ void SymbolTable::exportToFile() {
             file << "Initialized: " << varStack.top().isInitialized << std::endl
                 << "Used: " << varStack.top().isUsed << std::endl;
             if (varStack.top().isInitialized) {
-                std::visit([&file](const auto& value) { file << value << std::endl; }, varStack.top().value);
+                std::visit([&file](const auto& value) { file << "Value: " << value << std::endl; }, varStack.top().value);
             }
             file << "====================\n";
         }
