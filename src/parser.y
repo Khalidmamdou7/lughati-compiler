@@ -419,8 +419,37 @@ assignment :   IDENTIFIER EQUAL expression  {
                                                 }
                                             }  
            |   IDENTIFIER EQUAL IDENTIFIER   {
-                                                printf("Assignment Statment \n");}  
-           |   assignment COMMA IDENTIFIER EQUAL expression   {printf("Assignment Statment \n");}  
+                                                printf("Assignment Statment \n");
+                                                if (symbolTable->exists($1.name))
+                                                {
+                                                    printf("Variable %s exists\n", $1.name);
+                                                    Variable var = symbolTable->getVariable($1.name);
+                                                    variableManager->setTempVariable($1.name, var.type);
+                                                    std::visit([](const auto& value) { 
+                                                        variableManager->setTempVariableValue(value);
+                                                        printf("value: %d", value);
+                                                    }, var.value);
+                                                    if (symbolTable->exists($3.name)) {
+                                                        Variable var2 = symbolTable->getVariable($3.name);
+                                                        // var.value is of type std::variant<int, float, double, char, string, bool>
+                                                        // setTempVariableValue() expects an int, float, double, char, string, bool
+                                                        // convert variant to int, float, double, char, string, bool
+                                                        std::visit([](const auto& value) { 
+                                                            variableManager->setTempVariableValue(value);
+                                                            printf("value: %d", value);
+                                                        }, var2.value);
+                                                        symbolTable->setUsed($3.name);
+                                                        symbolTable->setUsed($1.name);
+                                                    }
+                                                    else {
+                                                        yyerror("Variable does not exist");
+                                                    }
+                                                } else {
+                                                    yyerror("Variable does not exist");
+                                                }
+                                            }  
+           |   assignment COMMA IDENTIFIER EQUAL expression   {printf("Assignment Statment \n");}
+           
 
 
 
