@@ -239,6 +239,7 @@ variable_defintion   : INT IDENTIFIER EQUAL INTEGER_VALUE       {
                                                                             variableManager->setTempVariableValue(value);
                                                                             printf("value: %d", value);
                                                                          }, var.value);
+                                                                        symbolTable->setUsed($4.name);
                                                                     }
                                                                     else {
                                                                         yyerror("Variable does not exist");
@@ -250,6 +251,21 @@ variable_defintion   : INT IDENTIFIER EQUAL INTEGER_VALUE       {
                                                                     printf("%d value",$4);
                                                                     variableManager->setTempVariable($2.name, "float");
                                                                     // TODO: get value of other identifier
+                                                                    if (symbolTable->exists($4.name)) {
+                                                                        Variable var = symbolTable->getVariable($4.name);
+                                                                        // var.value is of type std::variant<int, float, double, char, string, bool>
+                                                                        // setTempVariableValue() expects an int, float, double, char, string, bool
+                                                                        // convert variant to int, float, double, char, string, bool
+                                                                        std::visit([](const auto& value) { 
+                                                                            variableManager->setTempVariableValue(value);
+                                                                            printf("value: %d", value);
+                                                                         }, var.value);
+                                                                        symbolTable->setUsed($4.name);
+                                                                    }
+                                                                    else {
+                                                                        yyerror("Variable does not exist");
+                                                                    }
+
                                                                 }
                      | CHAR IDENTIFIER EQUAL IDENTIFIER         {
                                                                 
@@ -257,6 +273,21 @@ variable_defintion   : INT IDENTIFIER EQUAL INTEGER_VALUE       {
                                                                     printf("%d value",$4);
                                                                     variableManager->setTempVariable($2.name, "char");
                                                                     // TODO: get value of other identifier
+                                                                    if (symbolTable->exists($4.name)) {
+                                                                        Variable var = symbolTable->getVariable($4.name);
+                                                                        // var.value is of type std::variant<int, float, double, char, string, bool>
+                                                                        // setTempVariableValue() expects an int, float, double, char, string, bool
+                                                                        // convert variant to int, float, double, char, string, bool
+                                                                        std::visit([](const auto& value) { 
+                                                                            variableManager->setTempVariableValue(value);
+                                                                            printf("value: %d", value);
+                                                                         }, var.value);
+                                                                        symbolTable->setUsed($4.name);
+                                                                    }
+                                                                    else {
+                                                                        yyerror("Variable does not exist");
+                                                                    }
+
                                                                 }      
                      | STRING IDENTIFIER EQUAL IDENTIFIER       {
                                                                 
@@ -264,6 +295,21 @@ variable_defintion   : INT IDENTIFIER EQUAL INTEGER_VALUE       {
                                                                     printf("%d value",$4);
                                                                     variableManager->setTempVariable($2.name, "string");
                                                                     // TODO: get value of other identifier
+                                                                    if (symbolTable->exists($4.name)) {
+                                                                        Variable var = symbolTable->getVariable($4.name);
+                                                                        // var.value is of type std::variant<int, float, double, char, string, bool>
+                                                                        // setTempVariableValue() expects an int, float, double, char, string, bool
+                                                                        // convert variant to int, float, double, char, string, bool
+                                                                        std::visit([](const auto& value) { 
+                                                                            variableManager->setTempVariableValue(value);
+                                                                            printf("value: %d", value);
+                                                                         }, var.value);
+                                                                        symbolTable->setUsed($4.name);
+                                                                    }
+                                                                    else {
+                                                                        yyerror("Variable does not exist");
+                                                                    }
+
                                                                 }             
              
 
