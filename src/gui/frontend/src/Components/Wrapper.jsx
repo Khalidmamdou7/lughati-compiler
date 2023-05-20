@@ -35,28 +35,23 @@ const Wrapper = () => {
     };
     let api_host = process.env.API_HOST || "localhost:8000";
     const res = await axios.post(`http://${api_host}/parse`, requestBody);
-    console.log(res.data.error[0]);
-    if (res.data.error[0] === "e") {
-      setOutput(res.data.data + res.data.error);
-      if (
-        res.data.error[res.data.error.length - 4] >= "0" &&
-        res.data.error[res.data.error.length - 4] <= "9"
-      ) {
-        setToHighlight(
-          res.data.error[res.data.error.length - 4] +
-            res.data.error[res.data.error.length - 3]
-        );
-      } else {
-        setToHighlight(res.data.error[res.data.error.length - 3]);
-      }
+
+    if (res.data.data.includes("Error")) {
+      setOutput(res.data.data);
+
+      // Extract the last parsed integer from the error message
+      const matches = res.data.data.match(/\d+/g);
+      const lineNumber = parseInt(matches[matches.length - 1]);
+      console.log("LINE NUMBER", lineNumber);
+      setToHighlight(lineNumber);
     } else {
       setOutput(res.data.data);
       setToHighlight(-1);
     }
-  
+
     // Fetch symbol table data after compiling
     await fetchSymbolTableData();
-  };  
+  };
 
   const fetchSymbolTableData = async () => {
     let api_host = process.env.API_HOST || "localhost:8000";
