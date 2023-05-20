@@ -79,7 +79,7 @@
 
 [a-zA-Z_][a-zA-Z_0-9]*           {yylval.variable.name = strdup(yytext); return IDENTIFIER;}
 0|[-]?[1-9][0-9]*                {yylval.intValue = atoi(yytext); return INTEGER_VALUE;}
-[-]?[0-9]+['.'][0-9]*            {yylval.decimalValue = atoi(yytext);  return DECIMAL_VALUE;}         
+[-]?[0-9]+['.'][0-9]*            {yylval.decimalValue = atof(yytext);  return DECIMAL_VALUE;}         
 \'.?\'                           {yylval.charValue = strdup(yytext); return CHAR_VALUE;}
 \".?+\"                          {yylval.stringValue = strdup(yytext);   return STRING_VALUE;}
 .                                {yyerror("Lexical Error");}

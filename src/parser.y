@@ -3,6 +3,9 @@
     #include <stdio.h> 
     #include <stdlib.h>
     #include <string.h>
+    #include <iostream>
+    #include <string>
+    #include <algorithm>
     extern FILE *yyin;
     extern int yylineno;
     void yyerror(char *s);
@@ -11,12 +14,10 @@
     #include "../src/SymbolTable.h"
     #include "../src/VariableManager.h"
     #include "../src/Variable.h"
-    #include "../src/AST.cpp"
     #include <stdexcept>
 
     SymbolTable* symbolTable;
     VariableManager* variableManager;
-    Ast* ast;
 %}
 
 %token CONST VOID INT FLOAT DOUBLE CHAR STRING BOOL
@@ -54,7 +55,9 @@
 
 %type <variable> variable_defintion
 %type <variable> variable_decleration
-%type <variable> expression
+%type <decimalValue> expression
+%type <decimalValue> term
+%type <decimalValue> factor
 %start code
 
 
@@ -191,7 +194,7 @@ variable_defintion   : INT IDENTIFIER EQUAL INTEGER_VALUE       {
                      | FLOAT IDENTIFIER EQUAL DECIMAL_VALUE     {
                                                                 
                                                                    //Send the identifier name, type and value to to the symbol table and wait for the resopone
-                                                                    printf("%s value",$4);
+                                                                    printf("%s value",$2.name);
                                                                     variableManager->setTempVariable($2.name, "float");
                                                                     if (!variableManager->setTempVariableValue($4)) {
                                                                         yyerror("Variable value is not compatible with the variable type");
@@ -200,18 +203,24 @@ variable_defintion   : INT IDENTIFIER EQUAL INTEGER_VALUE       {
                      | CHAR IDENTIFIER EQUAL CHAR_VALUE         {
                                                                 
                                                                    //Send the identifier name, type and value to to the symbol table and wait for the resopone
-                                                                    printf("%d value",$4);
+                                                                    printf("%s value",$4);
+                                                                    std::string str = $4;
+                                                                    // remove quotes from string
+                                                                    str.erase(std::remove(str.begin(), str.end(), '\''), str.end());
                                                                     variableManager->setTempVariable($2.name, "char");
-                                                                    if (!variableManager->setTempVariableValue($4)) {
+                                                                    if (!variableManager->setTempVariableValue(str[0])) {
                                                                         yyerror("Variable value is not compatible with the variable type");
                                                                     }
                                                                 }     
                      | STRING IDENTIFIER EQUAL STRING_VALUE     {
                                                                 
                                                                    //Send the identifier name, type and value to to the symbol table and wait for the resopone
-                                                                    printf("%d value",$4);
+                                                                    printf("%s value",$4);
                                                                     variableManager->setTempVariable($2.name, "string");
-                                                                    if (!variableManager->setTempVariableValue($4)) {
+                                                                    std::string str = $4;
+                                                                    // remove quotes from string
+                                                                    str.erase(std::remove(str.begin(), str.end(), '"'), str.end());
+                                                                    if (!variableManager->setTempVariableValue(str)) {
                                                                         yyerror("Variable value is not compatible with the variable type");
                                                                     }
                                                                 }
@@ -221,6 +230,19 @@ variable_defintion   : INT IDENTIFIER EQUAL INTEGER_VALUE       {
                                                                     printf("%d value",$4);
                                                                     variableManager->setTempVariable($2.name, "int");
                                                                     // TODO: get value of other identifier
+                                                                    if (symbolTable->exists($4.name)) {
+                                                                        Variable var = symbolTable->getVariable($4.name);
+                                                                        // var.value is of type std::variant<int, float, double, char, string, bool>
+                                                                        // setTempVariableValue() expects an int, float, double, char, string, bool
+                                                                        // convert variant to int, float, double, char, string, bool
+                                                                        std::visit([](const auto& value) { 
+                                                                            variableManager->setTempVariableValue(value);
+                                                                            printf("value: %d", value);
+                                                                         }, var.value);
+                                                                    }
+                                                                    else {
+                                                                        yyerror("Variable does not exist");
+                                                                    }
                                                                 } 
                      | FLOAT IDENTIFIER EQUAL IDENTIFIER        {
                                                                 
@@ -248,9 +270,9 @@ variable_defintion   : INT IDENTIFIER EQUAL INTEGER_VALUE       {
 
 constant_decleration_and_defention : CONST variable_decleration EQUAL expression {
                                                                                     printf("%s value",$2.name);
-                                                                                    variableManager->setTempVariable($2.name, $2.type);
+                                                                                    // variableManager->setTempVariable($2.name, $2.type);
                                                                                     // TODO: get value of the expression
-                                                                                    variableManager->setTempVariableValue($4);
+                                                                                    // variableManager->setTempVariableValue($4);
                                                                                     //send to symbol table
                                                                                  }       
     
@@ -342,53 +364,18 @@ comparison_expression : IDENTIFIER comparsion_operator expression               
 
 
 
-expression : expression PLUS term       {$$ = $1 + $3;}        
-           | expression MINUS term      {$$ = $1 - $3;}
+expression : expression PLUS term     
+           | expression MINUS term
            | term                   
 
-term       : term MULTIPLY factor   {$$ = $1 * $3;}
-           | term DIVISON factor    {$$ = $1 / $3;}
+term       : term MULTIPLY factor
+           | term DIVISON factor
            | factor 
 
 factor     : expression
            | INTEGER_VALUE            
-           | DECIMAL_VALUE          { 
-                                        $$ = $1;
-                                    }
-                                    
-           | IDENTIFIER             {   
-                                        if (symbolTable->exists($1.name))
-                                        {
-                                            printf("Variable %s exists\n", $1.name);
-                                            Variable var = symbolTable->getVariable($1.name);
-                                            switch (var.type)
-                                            {
-                                                case "int":
-                                                    $$ = symbolTable->getIntValue($1.name);
-                                                    break;
-                                                case "float":
-                                                    $$ = symbolTable->getFloatValue($1.name);
-                                                    break;
-                                                case "double":
-                                                    $$ = symbolTable->getDoubleValue($1.name);
-                                                    break;
-                                                case "char":
-                                                    $$ = symbolTable->getCharValue($1.name);
-                                                    break;
-                                                case "string":
-                                                    $$ = symbolTable->getStringValue($1.name);
-                                                    break;
-                                                default:
-                                                    yyerror("Variable does not exist");
-                                                    break;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            yyerror("Variable does not exist");
-                                        }
-                                    }
-
+           | DECIMAL_VALUE
+           | IDENTIFIER             
 
 data_type : INT        
           | FLOAT   
@@ -400,7 +387,7 @@ data_type : INT
 
 data_value : INTEGER_VALUE
            | DECIMAL_VALUE
-           | CHAR_VALUE         
+           | CHAR_VALUE   { }      
            | STRING_VALUE       
 
 locigal_operator : OR
@@ -433,7 +420,6 @@ int main(int argc, char *argv[])
     // Initialize the symbol table.
     symbolTable = new SymbolTable();
     variableManager = new VariableManager();
-    ast = new ProgramAst();
 
     char input[1000];
     FILE *fp = NULL;

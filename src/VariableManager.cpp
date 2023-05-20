@@ -129,6 +129,7 @@ bool VariableManager::setTempVariableValue(float value) {
 
 bool VariableManager::setTempVariableValue(double value) {
     std::cout << "setTempVariableValue(double value)" << std::endl;
+    std::cout << value << std::endl;
     if (tempVariable)
         if (tempVariable->getType() == "float")
             tempVariable->setValue((float)value);

@@ -68,7 +68,7 @@ Variable SymbolTable::getVariable(const std::string& name) {
     if (exists(name) && !symbolTable[name].empty()) {
         return symbolTable[name].top();
     }
-    return Variable();
+    return Variable("", "");
 }
 
 void SymbolTable::setVariableValue(const std::string& name, const std::variant<int, float, double, bool, std::string, char>& value) {
