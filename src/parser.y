@@ -10,10 +10,13 @@
     #include "../src/test.cpp"
     #include "../src/SymbolTable.h"
     #include "../src/VariableManager.h"
+    #include "../src/Variable.h"
+    #include "../src/AST.cpp"
     #include <stdexcept>
 
     SymbolTable* symbolTable;
     VariableManager* variableManager;
+    Ast* ast;
 %}
 
 %token CONST VOID INT FLOAT DOUBLE CHAR STRING BOOL
@@ -51,6 +54,7 @@
 
 %type <variable> variable_defintion
 %type <variable> variable_decleration
+%type <variable> expression
 %start code
 
 
@@ -94,7 +98,18 @@ statment  : variable_decleration SEMICOLON                  {
                                                                 }
 
                                                             }
-          | constant_decleration_and_defention SEMICOLON    {printf("Constant Defintion \n");}
+          | constant_decleration_and_defention SEMICOLON    {
+                                                                printf("Constant Defintion \n");
+                                                                variableManager->printTempVariable();
+                                                                TempVariable* tempVariable = variableManager->getTempVariable();
+                                                                if (symbolTable->exists(tempVariable->getName())) {
+                                                                    yyerror("Variable already exists");
+                                                                }
+                                                                else {
+                                                                    symbolTable->insert(tempVariable->getName(), tempVariable->getType(), true);
+                                                                    symbolTable->setVariableValue(tempVariable->getName(), tempVariable->getValue());
+                                                                }
+                                                            }
           | assignment SEMICOLON   
           | comparison_expression SEMICOLON
           | if_clause
@@ -235,6 +250,7 @@ constant_decleration_and_defention : CONST variable_decleration EQUAL expression
                                                                                     printf("%s value",$2.name);
                                                                                     variableManager->setTempVariable($2.name, $2.type);
                                                                                     // TODO: get value of the expression
+                                                                                    variableManager->setTempVariableValue($4);
                                                                                     //send to symbol table
                                                                                  }       
     
@@ -303,8 +319,20 @@ scope :  SCOPE_OPEN statments SCOPE_CLOSE   {printf("Scope \n");}
       |  SCOPE_OPEN SCOPE_CLOSE
       ;
 
-assignment :   IDENTIFIER EQUAL expression  {printf("Assignment Statment \n");}  
-           |   IDENTIFIER EQUAL IDENTIFIER   {printf("Assignment Statment \n");}  
+assignment :   IDENTIFIER EQUAL expression  {
+                                                printf("Assignment Statment \n");
+                                                if (symbolTable->exists($1.name))
+                                                {
+                                                    printf("Variable %s exists\n", $1.name);
+                                                    Variable var = symbolTable->getVariable($1.name);
+                                                    variableManager->setTempVariable($1.name, var.type);
+                                                    if (!variableManager->setTempVariableValue($3)) {
+                                                        yyerror("Variable value is not compatible with the variable type");
+                                                    }
+                                                }
+                                            }  
+           |   IDENTIFIER EQUAL IDENTIFIER   {
+                                                printf("Assignment Statment \n");}  
            |   assignment COMMA IDENTIFIER EQUAL expression   {printf("Assignment Statment \n");}  
 
 
@@ -314,18 +342,52 @@ comparison_expression : IDENTIFIER comparsion_operator expression               
 
 
 
-expression : expression PLUS term                             
-           | expression MINUS term 
-           | term 
+expression : expression PLUS term       {$$ = $1 + $3;}        
+           | expression MINUS term      {$$ = $1 - $3;}
+           | term                   
 
-term       : term MULTIPLY factor   
-           | term DIVISON factor  
+term       : term MULTIPLY factor   {$$ = $1 * $3;}
+           | term DIVISON factor    {$$ = $1 / $3;}
            | factor 
 
-factor     : expression      
+factor     : expression
            | INTEGER_VALUE            
-           | DECIMAL_VALUE       
-           | IDENTIFIER   
+           | DECIMAL_VALUE          { 
+                                        $$ = $1;
+                                    }
+                                    
+           | IDENTIFIER             {   
+                                        if (symbolTable->exists($1.name))
+                                        {
+                                            printf("Variable %s exists\n", $1.name);
+                                            Variable var = symbolTable->getVariable($1.name);
+                                            switch (var.type)
+                                            {
+                                                case "int":
+                                                    $$ = symbolTable->getIntValue($1.name);
+                                                    break;
+                                                case "float":
+                                                    $$ = symbolTable->getFloatValue($1.name);
+                                                    break;
+                                                case "double":
+                                                    $$ = symbolTable->getDoubleValue($1.name);
+                                                    break;
+                                                case "char":
+                                                    $$ = symbolTable->getCharValue($1.name);
+                                                    break;
+                                                case "string":
+                                                    $$ = symbolTable->getStringValue($1.name);
+                                                    break;
+                                                default:
+                                                    yyerror("Variable does not exist");
+                                                    break;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            yyerror("Variable does not exist");
+                                        }
+                                    }
 
 
 data_type : INT        
@@ -338,8 +400,8 @@ data_type : INT
 
 data_value : INTEGER_VALUE
            | DECIMAL_VALUE
-           | CHAR_VALUE
-           | STRING_VALUE     
+           | CHAR_VALUE         
+           | STRING_VALUE       
 
 locigal_operator : OR
                  | AND  
@@ -371,6 +433,7 @@ int main(int argc, char *argv[])
     // Initialize the symbol table.
     symbolTable = new SymbolTable();
     variableManager = new VariableManager();
+    ast = new ProgramAst();
 
     char input[1000];
     FILE *fp = NULL;

@@ -14,7 +14,7 @@ private:
     std::unordered_map<std::string, std::stack<Variable>> symbolTable;
 
 public:
-    void insert(const std::string& name, const std::string& type);
+    void insert(const std::string& name, const std::string& type, bool isConstant = false, bool isFunction = false);
     void enterScope();
     void exitScope();
     bool exists(const std::string& name);
@@ -24,6 +24,7 @@ public:
     bool isUsed(const std::string& name);
     void setUsed(const std::string& name);
     void checkUnusedVariables();
+	Variable getVariable(const std::string& name);
 	void setVariableValue(const std::string& name, const std::variant<int, float, double, bool, std::string, char>& value);
 	void setValue(const std::string& name, int value);
 	void setValue(const std::string& name, float value);

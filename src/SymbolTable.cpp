@@ -4,8 +4,8 @@
 #include <string>
 #include <utility>
 
-void SymbolTable::insert(const std::string& name, const std::string& type) {
-    symbolTable[name].push(Variable(name, type));
+void SymbolTable::insert(const std::string& name, const std::string& type, bool isConstant, bool isFunction) {
+    symbolTable[name].push(Variable(name, type, isConstant, isFunction));
 }
 
 void SymbolTable::enterScope() {
@@ -62,6 +62,13 @@ void SymbolTable::checkUnusedVariables() {
             std::cout << "Warning: Variable '" << varStack.top().name << "' declared but not used.\n";
         }
     }
+}
+
+Variable SymbolTable::getVariable(const std::string& name) {
+    if (exists(name) && !symbolTable[name].empty()) {
+        return symbolTable[name].top();
+    }
+    return Variable();
 }
 
 void SymbolTable::setVariableValue(const std::string& name, const std::variant<int, float, double, bool, std::string, char>& value) {

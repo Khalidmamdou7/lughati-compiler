@@ -15,7 +15,9 @@ public:
     Value value;
     bool isInitialized;
     bool isUsed;
-    Variable(const std::string& name, const std::string& type);
+    bool isConstant;
+    bool isFunction;
+    Variable(const std::string& name, const std::string& type, bool isConstant = false, bool isFunction = false); // Constructor
     Variable(const Variable& other); // Copy constructor
     // Add other member functions as needed
 };
