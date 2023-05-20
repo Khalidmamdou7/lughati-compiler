@@ -15,6 +15,10 @@ const SymbolTable = (props) => {
     setLineCounter(lineCounter + 1);
   };
 
+  const onReset = () => {
+    setLineCounter(0);
+  };
+
   const filteredData = tableData.filter((row) => row.line <= lineCounter);
 
   return (
@@ -46,6 +50,9 @@ const SymbolTable = (props) => {
         <div className="symbol_table_btnandcounter">
           <button className="symbol_table_button" onClick={onStepNextLine}>
             Step next line
+          </button>
+          <button className="symbol_table_button" onClick={onReset}>
+            Reset counter
           </button>
           <div className="symbol_table_counter">Line: {lineCounter}</div>
         </div>
